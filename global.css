@@ -18,6 +18,9 @@
 .bg-primary {
   background-color: var(--primary);
 }
+.bg-primary-text {
+  color: white;
+}
 .text-primary {
   color: var(--primary);
 }
@@ -26,6 +29,12 @@
 }
 .text-secondary {
   color: var(--secondary);
+}
+.text-error {
+  color: var(--error);
+}
+.text-success {
+  color: var(--success);
 }
 .bg {
   background-color: var(--background);
@@ -36,4 +45,8 @@ body {
   background-color: var(--background);
   color: white;
   font-family: Inter;
+}
+
+a {
+  color: var(--primary);
 }

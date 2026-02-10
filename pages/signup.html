@@ -9,7 +9,42 @@
 <body>
     <div>
         <div>
-            <h1>Sign Up</h1>
+            <h1>Create an Account</h1>
+            <p id="signupError" class="text-error">Username already exists!</p>
+            <form id="signupForm">
+                <!-- Displayed: inline on Desktop, Block on mobile -->
+                <span>
+                    <label for="firstName">First Name</label>
+                    <input type="text" name="firstName" id="firstName"/>
+                    <label for="surname">Surname</label>
+                    <input type="text" name="surname" id="surname" />
+                </span>
+                <span>
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" />
+                </span>
+                
+                <span>
+                    <label for="password">Create Password</label>
+                    <input type="password" name="password" id="password" />
+                </span>
+                
+                <span>
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" name="confirmPassword" id="confirmPassword" />
+                </span>
+                <button type="submit">
+                    Signup
+                </button>
+
+                <span>
+                    Already have an account?
+                    <a href="./login.html">Login</a>
+                </span>
+
+
+            </form>
+
         </div>
     </div>
 </body>
