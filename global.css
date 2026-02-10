@@ -50,3 +50,17 @@ body {
 a {
   color: var(--primary);
 }
+
+/* Utility classes for positioning */
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.justify-center {
+  justify-content: center;
+}
+.items-center {
+  align-items: center;
+}
