@@ -1,0 +1,39 @@
+/* Fonts */
+@font-face {
+  font-family: "Inter";
+  src: url(./assets/fonts/Inter/Inter-VariableFont_opsz\,wght.ttf);
+}
+
+/* Colors */
+:root {
+  --primary: #8a2be2;
+  --secondary: #141212;
+  --background: #0b0909;
+  --border-color: #555252;
+  --error: #db6f6f;
+  --success: #34c759;
+}
+
+/* Colors as classes for reusability on inline styling */
+.bg-primary {
+  background-color: var(--primary);
+}
+.text-primary {
+  color: var(--primary);
+}
+.bg-seconday {
+  background-color: var(--secondary);
+}
+.text-secondary {
+  color: var(--secondary);
+}
+.bg {
+  background-color: var(--background);
+}
+/* Colors as Classes end here */
+
+body {
+  background-color: var(--background);
+  color: white;
+  font-family: Inter;
+}
