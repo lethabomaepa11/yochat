@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People | YoChat!</title>
+    <link href="../assets/icons/fontawesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="../assets/icons/fontawesome/css/brands.css" rel="stylesheet" />
+    <link href="../assets/icons/fontawesome/css/solid.css" rel="stylesheet" />
+    <link href="../assets/icons/fontawesome/css/regular.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../global.css">
+</head>
+
+<body class="flex">
+    <!-- Desktop Nav -->
+    <aside>
+        <ul class="flex flex-col">
+            <a href="./chat.html">
+                <li title="Chat"><i class="fa-solid fa-comment-dots"></i></li>
+            </a>
+            <a href="./groups.html" style="color: white;">
+                <li title="Groups"><i class="fa-solid fa-user-group"></i></li>
+            </a>
+            <a href="./people.html" style="color: white;">
+                <li title="People"><i class="fa-solid fa-people-line"></i></li>
+            </a>
+            <a href="./profile.html" style="color: white;">
+                <li title="Profile"><i class="fa-regular fa-circle-user"></i></li>
+            </a>
+        </ul>
+    </aside>
+    <!-- Where the list of people will be shown -->
+    <div id="middleView">
+        <h1>People</h1>
+        <input type="search" placeholder="Search People" name="searchInput" id="searchInput" />
+        <div id="peopleList" class="list">
+        </div>
+    </div>
+    <main id="mainView">
+
+    </main>
+    <!-- Mobile -->
+    <nav id="bottomNav">
+        <ul class="flex">
+            <a href="./chat.html">
+                <li title="Chat"><i class="fa-solid fa-comment-dots"></i></li>
+            </a>
+            <a href="./groups.html" style="color: white;">
+                <li title="Groups"><i class="fa-solid fa-user-group"></i></li>
+            </a>
+            <a href="./people.html" style="color: white;">
+                <li title="People"><i class="fa-solid fa-people-line"></i></li>
+            </a>
+            <a href="./profile.html" style="color: white;">
+                <li title="Profile"><i class="fa-regular fa-circle-user"></i></li>
+            </a>
+        </ul>
+    </nav>
+
+    <script type="module" src="../index.js"></script>
+    <script type="module" src="../js/people.js"></script>
+</body>
+
+</html>

@@ -23,12 +23,15 @@ body {
     radial-gradient(circle, var(--secondary) 1px, transparent 1px),
     radial-gradient(circle, var(--secondary), transparent 1px);
   background-size: 8px 10px;
+  margin: 0;
+  padding: 0;
 }
 
 a {
   color: var(--primary);
 }
-.form-container {
+.form-container,
+.card {
   border-radius: var(--radius);
   padding: 20px;
   min-width: 400px;
@@ -47,6 +50,7 @@ input,
 textarea {
   padding: 10px;
   border: none;
+  width: 100%;
 }
 input,
 textarea {
@@ -57,8 +61,71 @@ textarea {
 }
 button {
   border-radius: 25px;
+  background-color: var(--secondary);
+  cursor: pointer;
+}
+h1 {
+  margin: 0;
+  padding: 8px;
+}
+#middleView {
+  width: 230px;
+  background-color: var(--secondary);
+  height: 100vh;
+  padding-inline: 10px;
 }
 
+#mainView {
+  width: 100%;
+}
+#bottomNav {
+  display: none;
+}
+aside {
+  margin: 0;
+  padding: 10px;
+  width: 60px;
+  background-color: var(--background);
+}
+
+i {
+  font-size: 15pt;
+  padding: 10px;
+}
+
+i:hover {
+  color: var(--primary);
+}
+.list {
+  width: 100%;
+}
+/* Expected children: Image + Span*/
+.chat-list-item {
+  display: flex;
+  align-items: center;
+  margin-block: 10px;
+  width: 98%;
+  padding: 5px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.chat-list-item:hover {
+  background-color: var(--background);
+}
+.chat-list-item span {
+  margin: 5px;
+  display: block;
+  padding: 0;
+}
+.chat-list-item span p {
+  margin: 0;
+}
+.avatar {
+  border-radius: 100%;
+  width: 40px;
+  height: 40px;
+}
 /* An alert element */
 .alert {
   border: 1px solid var(--border-color);
@@ -78,6 +145,13 @@ button {
   background-color: var(--success);
 }
 /* Utility classes for styling */
+ul {
+  all: unset;
+}
+ul li {
+  all: unset;
+  margin: 0;
+}
 
 .flex {
   display: flex;
@@ -101,11 +175,17 @@ button {
 .text-primary {
   color: var(--primary);
 }
+.text-xs {
+  font-size: 12px;
+}
 .bg-seconday {
   background-color: var(--secondary);
 }
 .text-secondary {
   color: var(--secondary);
+}
+.text-grey {
+  color: var(--border-color);
 }
 .text-error {
   color: var(--error);
@@ -117,12 +197,44 @@ button {
   background-color: var(--background);
 }
 /* Mobile styles */
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 700px) {
   .form-container {
     background-color: inherit;
+  }
+  .card-sm {
+    min-width: 0px;
+    max-width: 400px;
   }
 
   .sm-flex-col {
     flex-direction: column;
+  }
+  /* No sidebar on mobile */
+  aside {
+    display: none;
+  }
+  #middleView {
+    width: 100svw;
+  }
+  #mainView {
+    width: 100svw;
+    height: 100svh;
+    display: none;
+  }
+  #bottomNav {
+    position: fixed;
+    bottom: 0;
+    width: 90svw;
+    right: 10px;
+    display: grid;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: var(--radius);
+    background-color: var(--secondary);
+  }
+  #bottomNav ul {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
   }
 }
