@@ -8,6 +8,9 @@ const peopleList = document.getElementById("peopleList");
 const searchInput = document.getElementById("searchInput");
 const middleView = document.getElementById("middleView");
 const mainView = document.getElementById("mainView");
+const sessionUser = JSON.parse(sessionStorage.getItem("session"));
+const chatStore = new Store("chats");
+
 
 //event listeners
 document.addEventListener("load", getUsers());
@@ -77,16 +80,14 @@ function toggleView() {
     middleView.style.display = "none";
     mainView.style.display = "block";
 }
+// create a private chat
 function initiateChat(userId) {
-    const sessionUser = JSON.parse(sessionStorage.getItem("session"));
     const chat = new Chat([userId, sessionUser?.id]);
-    const chatStore = new Store("chats");
     const alert = new Alert();
-    //get chats that this user is in
     const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
 
-    //check if the other user has a shared chat with this user
-    if (chats.some(c => c.users.includes(userId))) {
+    //check if the chat between the two does not exist
+    if (chats.some(c => c.users.includes(userId) && c.type != "group")) {
         location.href = './chat.html';
         return;
     }

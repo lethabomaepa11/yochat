@@ -13,7 +13,7 @@ const chatIdElement = document.createElement("input");
 const sessionUser = JSON.parse(sessionStorage.getItem("session"));
 const chatStore = new Store("chats");
 const userStore = new Store("users");
-
+const isGroupsChat = location.href.includes("groups.html");
 
 //event listeners
 window.addEventListener("load", () => {
@@ -33,22 +33,18 @@ searchInput.addEventListener("change", (e) => getUsers(searchInput.value));
 window.addEventListener("storage", (e) => {
     if (e.key == "chats") {
         displayChats();
-        const affectedChat = JSON.parse(e.newValue).at(-1);
+        const chats = JSON.parse(e.newValue);
         const chatId = chatIdElement.value;
-        //if it is the currently opened chat, update the messagesView
-        if (affectedChat.id == chatId) {
-            renderMessages(null, true, affectedChat.messages.at(-1));
+        const currentChat = chats.find(chat => chat.id == chatId);
+        if (currentChat) {
+            renderMessages(currentChat);
         }
     }
 })
 
 
-
-
-
-
 function displayChats() {
-    chatList.replaceChildren();//clearing items
+
     //get chats that this user is in
     const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
     //if no chats are found
@@ -65,25 +61,49 @@ function displayChats() {
         //create an element for each chat
         const item = document.createElement("li");
         
-        const userId = chat.users.find(id => id != sessionUser.id);
-        const user = userStore.getAll().find(u => u.id == userId);
-        item.addEventListener("click", () => showSelectedChat(chat.id))
-        item.innerHTML =
-            `<div id='${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
-                <img class='avatar' src='../assets/images/avatar.jpg'/>
-                <span>
-                    <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
-                    <p class='text-grey text-xs'>
-                        ${chat.messages.at(-1)?.senderId == sessionUser.id ? "You" : user.firstName}:
-                        ${chat.messages.at(-1)?.content ?? ""}
-                    </p>
-                    <p class='text-grey text-xs'>${chat.messages.at(-1)?.time ?? ""}</p>
-                </span>
-            </div>`
+        if (!isGroupsChat && chat.type != "group") {
+            //private chats
+            //other user in the chat
+            const userId = chat.users.find(id => id != sessionUser.id);
+            const user = userStore.getAll().find(u => u.id == userId);
+
+            
+
+            item.addEventListener("click", () => showSelectedChat(chat.id))
+            item.innerHTML =
+                `<div id='${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
+                    <img class='avatar' src='../assets/images/avatar.jpg'/>
+                    <span>
+                        <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
+                        <p class='text-grey text-xs'>
+                            ${chat.messages.at(-1)?.senderId == sessionUser.id ? "You" : user.firstName}:
+                            ${chat.messages.at(-1)?.content ?? ""}
+                        </p>
+                        <p class='text-grey text-xs'>${chat.messages.at(-1)?.time ?? ""}</p>
+                    </span>
+                </div>`
+        }
+        else if(isGroupsChat && chat.type == "group"){
+            //group chats
+            //other users in the chat
+            item.addEventListener("click", () => showSelectedChat(chat.id))
+            item.innerHTML =
+                `<div id='${chat.name}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
+                    <img class='avatar' src='../assets/images/avatar.jpg'/>
+                    <span>
+                        <p>${chat.name}</p>
+                        <p class='text-grey text-xs'>
+                            ${chat.messages.at(-1)?.content ?? ""}
+                        </p>
+                        <p class='text-grey text-xs'>${chat.messages.at(-1)?.time ?? ""}</p>
+                    </span>
+                </div>`
+        }
+            
         list.appendChild(item);
     })
     //append the list to the parent node
-    chatList.appendChild(list);
+    chatList.replaceChildren(list);
 
 }
 function toggleView() {
@@ -104,14 +124,15 @@ function toggleView() {
     middleView.style.display = "none";
     mainView.style.display = "block";
 }
+
+// create a private chat
 function initiateChat(userId) {
-    const sessionUser = JSON.parse(sessionStorage.getItem("session"));
     const chat = new Chat([userId, sessionUser?.id]);
     const alert = new Alert();
-    const chats = chatStore.getAll();
+    const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
 
     //check if the chat between the two does not exist
-    if (chats.some(c => c.users.includes(sessionUser.id)) && chats.some(c => c.users.includes(userId))) {
+    if (chats.some(c => c.users.includes(userId) && c.type != "group")) {
         location.href = './chat.html';
         return;
     }
@@ -119,10 +140,13 @@ function initiateChat(userId) {
     location.href = `./chat.html?c=${chat.id}`;
 }
 
+
+
 //link to the window
 window.initiateChat = initiateChat;
 window.toggleView = toggleView;
 window.sendMessage = sendMessage;
+
 
 function showSelectedChat(chatId) {
     //save to the chatIdElement that is not yet on the page
@@ -142,7 +166,7 @@ function showSelectedChat(chatId) {
             <a href="./chat.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
             <img class='avatar' src='../assets/images/avatar.jpg' />
             <span>
-                <p>${user.firstName} ${user.surname}</p>
+                <p>${chat.type == "group" ? chat.name : user.firstName + " "+ user.surname}</p>
                 ${user.isOnline ? `<p class='text-success text-xs'></p>` : `<p class='text-error text-xs'>Offline</p>`}
             </span>   
         `
@@ -150,7 +174,7 @@ function showSelectedChat(chatId) {
         document.getElementById("chatInputContainer").style.display = "flex";
         //insert its contents
         document.getElementById("chatInputContainer").innerHTML = `
-            <textarea type="text" name="chatInput" id="chatInput"></textarea>
+            <textarea type="text" name="chatInput" id="chatInput" class="w-full"></textarea>
             <button class="bg-primary" onclick="sendMessage('${chat.id}')">Send</button>
         `
 
@@ -192,7 +216,8 @@ function renderMessages(chat, append = false, message = null) {
         messagesView.scrollTop = messagesView.scrollHeight;
         return;
     }
-    //if no messages are there yet
+    
+    //check if there are any messages in the chat
     if (!chat.messages?.length) {
         messagesView.innerHTML = `
         <div class="flex flex-col items-center justify-center" style="margin-top: 20px;">
@@ -203,6 +228,7 @@ function renderMessages(chat, append = false, message = null) {
         return;
     }
 
+
     const messages = [];
     //sort the messages 
     chat.messages?.forEach(message => {
@@ -212,6 +238,7 @@ function renderMessages(chat, append = false, message = null) {
         element.innerHTML = `
         <div class="message-container">
             <div id="message${message.senderId == sessionUser.id ? "From" : "To"}" class="message">
+                ${chat.type == "group" && message.senderId != sessionUser.id  ?"<p class='text-primary'>"+userStore.getAll().find(u => u.id == message.senderId).username+"</p>" : "" }
                 <p>${message.content}</p>
                 <p class="text-xs">${message.time}</p>
             </div>
@@ -222,11 +249,16 @@ function renderMessages(chat, append = false, message = null) {
 
     //render the messages
     messagesView.replaceChildren(...messages);
+    //scroll down
     messagesView.scrollTop = messagesView.scrollHeight;
     
 }
 
+
 function sendMessage(chatId) {
+    /**
+     * Reads the chatInput element, creates a message object, and stores in localstorage
+     */
     const text = document.getElementById("chatInput").value;
     const alert = new Alert();
     if (!text.length) {

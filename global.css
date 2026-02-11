@@ -50,7 +50,6 @@ input,
 textarea {
   padding: 10px;
   border: none;
-  width: 100%;
 }
 input,
 textarea {
@@ -69,7 +68,7 @@ h1 {
   padding: 8px;
 }
 #middleView {
-  width: 230px;
+  width: 400px;
   background-color: var(--secondary);
   height: 100vh;
   padding-inline: 10px;
@@ -199,6 +198,9 @@ ul li {
 .bg-background {
   background-color: var(--background);
 }
+.w-full {
+  width: 100%;
+}
 .chat-view {
   display: flex;
   flex-direction: column;
@@ -218,6 +220,7 @@ ul li {
   border-radius: 25px;
   padding: 10px;
 }
+
 #messageTo {
   float: left;
   background-color: var(--secondary);
@@ -281,4 +284,31 @@ ul li {
     grid-template-columns: repeat(4, 1fr);
     width: 100%;
   }
+}
+.overlay,
+#modal {
+  display: none;
+}
+.overlay {
+  background-color: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100svh;
+  width: 100svw;
+  opacity: 0.8;
+}
+#modal {
+  position: fixed;
+  z-index: 50;
+  background-color: var(--secondary);
+  padding: 10px;
+  border-radius: 10px;
+  min-width: 300px;
+
+  flex-direction: column;
+  gap: 5px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
