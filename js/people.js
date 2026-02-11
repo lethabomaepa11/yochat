@@ -1,5 +1,6 @@
 import { Store } from "./utils/store.js"
 import { Alert } from "./utils/alert.js"
+import { Chat } from "./models/Chat.js";
 
 
 //global variables/elements
@@ -31,6 +32,9 @@ function getUsers(key = "*") {
 function displayUsers(users = []) {
     peopleList.replaceChildren();//clearing items
 
+    //getting the session
+    const sessionUser = JSON.parse(sessionStorage.getItem("session"));
+
     //if no users are found
     if (!users.length) {
         const message = document.createElement("p");
@@ -48,7 +52,7 @@ function displayUsers(users = []) {
             `<div id='${user.username}' class='chat-list-item'>
                 <img class='avatar' src='../assets/images/avatar.jpg'/>
                 <span>
-                    <p>${user.firstName} ${user.surname}</p>
+                    <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
                     <p class='text-success text-xs'>Online</p>
                 </span>
             </div>`
@@ -73,6 +77,24 @@ function toggleView() {
     middleView.style.display = "none";
     mainView.style.display = "block";
 }
+function initiateChat(userId) {
+    const sessionUser = JSON.parse(sessionStorage.getItem("session"));
+    const chat = new Chat([userId, sessionUser?.id]);
+    const chatStore = new Store("chats");
+    const alert = new Alert();
+    //get chats that this user is in
+    const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
+
+    //check if the other user has a shared chat with this user
+    if (chats.some(c => c.users.includes(userId))) {
+        location.href = './chat.html';
+        return;
+    }
+    chatStore.insert(chat);
+    location.href = `./chat.html?c=${chat.id}`;
+}
+
+window.initiateChat = initiateChat;
 function showSelectedUser(userId) {
     const userStore = new Store("users");
     const user = userStore.getAll().find(usr => usr.id == userId);
@@ -97,6 +119,3 @@ function showSelectedUser(userId) {
     }
 }
 
-function initiateChat(userId) {
-    
-}

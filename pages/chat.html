@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>People | YoChat!</title>
+    <title>Chats | YoChat!</title>
     <link href="../assets/icons/fontawesome/css/fontawesome.css" rel="stylesheet" />
     <link href="../assets/icons/fontawesome/css/brands.css" rel="stylesheet" />
     <link href="../assets/icons/fontawesome/css/solid.css" rel="stylesheet" />
@@ -32,12 +32,20 @@
     </aside>
     <!-- Where the list of people will be shown -->
     <div id="middleView">
-        <h1>People</h1>
-        <input type="search" placeholder="Search People" name="searchInput" id="searchInput" />
-        <div id="peopleList" class="list">
+        <h1>Chats</h1>
+        <input type="search" placeholder="Search chats" name="searchInput" id="searchInput" />
+        <div id="chatList" class="list">
         </div>
     </div>
-    <main id="mainView">
+    <main id="mainView" class="chat-view">
+        <header id='chatHeader' class='chat-list-item'>
+            
+        </header>
+        <div class="messages-view" id="messagesView">
+        </div>
+        <div class="chat-input" id="chatInputContainer">
+            
+        </div>
 
     </main>
     <!-- Mobile -->
@@ -59,7 +67,7 @@
     </nav>
 
     <script type="module" src="../index.js"></script>
-    <script type="module" src="../js/people.js"></script>
+    <script type="module" src="../js/chats.js"></script>
 </body>
 
 </html>
