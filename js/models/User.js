@@ -6,5 +6,7 @@ export class User{
         this.password = password;
         this.securityQuestion = securityQuestion;
         this.securityAnswer = securityAnswer;
+        this.isOnline = false;
     }
+    
 }

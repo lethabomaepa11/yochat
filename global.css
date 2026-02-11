@@ -23,6 +23,8 @@ body {
     radial-gradient(circle, var(--secondary) 1px, transparent 1px),
     radial-gradient(circle, var(--secondary), transparent 1px);
   background-size: 8px 10px;
+  margin: 0;
+  padding: 0;
 }
 
 a {
@@ -54,11 +56,70 @@ textarea {
   border: 1px solid var(--border-color);
   background-color: var(--secondary);
   color: white;
+  width: 100%;
 }
 button {
   border-radius: 25px;
+  background-color: var(--secondary);
+}
+h1 {
+  margin: 0;
+  padding: 8px;
+}
+#middleView {
+  width: 230px;
+  background-color: var(--secondary);
+  height: 100vh;
+  padding-inline: 10px;
+}
+#bottomNav {
+  display: none;
+}
+aside {
+  margin: 0;
+  padding: 10px;
+  width: 60px;
+  background-color: var(--background);
 }
 
+i {
+  font-size: 15pt;
+  padding: 10px;
+}
+
+i:hover {
+  color: var(--primary);
+}
+.list {
+  width: 100%;
+}
+/* Expected children: Image + Span*/
+.chat-list-item {
+  display: flex;
+  align-items: center;
+  margin-block: 10px;
+  width: 98%;
+  padding: 5px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.chat-list-item:hover {
+  background-color: var(--background);
+}
+.chat-list-item span {
+  margin: 5px;
+  display: block;
+  padding: 0;
+}
+.chat-list-item span p {
+  margin: 0;
+}
+.avatar {
+  border-radius: 100%;
+  width: 40px;
+  height: 40px;
+}
 /* An alert element */
 .alert {
   border: 1px solid var(--border-color);
@@ -78,6 +139,13 @@ button {
   background-color: var(--success);
 }
 /* Utility classes for styling */
+ul {
+  all: unset;
+}
+ul li {
+  all: unset;
+  margin: 0;
+}
 
 .flex {
   display: flex;
@@ -100,6 +168,9 @@ button {
 }
 .text-primary {
   color: var(--primary);
+}
+.text-xs {
+  font-size: 12px;
 }
 .bg-seconday {
   background-color: var(--secondary);
@@ -124,5 +195,27 @@ button {
 
   .sm-flex-col {
     flex-direction: column;
+  }
+  /* No sidebar on mobile */
+  aside {
+    display: none;
+  }
+  #middleView {
+    width: 100svw;
+  }
+  #bottomNav {
+    position: fixed;
+    bottom: 0;
+    width: 90svw;
+    right: 10px;
+    display: grid;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: var(--radius);
+  }
+  #bottomNav ul {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
   }
 }
