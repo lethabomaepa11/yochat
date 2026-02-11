@@ -5,6 +5,7 @@ import { Alert } from "./utils/alert.js"
 //global variables/elements
 const peopleList = document.getElementById("peopleList");
 const searchInput = document.getElementById("searchInput");
+const middleView = document.getElementById("middleView");
 const mainView = document.getElementById("mainView");
 
 //event listeners
@@ -57,15 +58,31 @@ function displayUsers(users = []) {
     peopleList.appendChild(list);
 
 }
-
+function toggleView() {
+    if (window.innerWidth > 700) {
+        //desktop, just skip this method
+        return;
+    }
+    //main is currently active
+    if (middleView.style.display == "none") {
+        middleView.style.display = "flex";
+        mainView.style.display = "none";
+        return;
+    }
+    //middleView is currently active
+    middleView.style.display = "none";
+    mainView.style.display = "block";
+}
 function showSelectedUser(userId) {
     const userStore = new Store("users");
     const user = userStore.getAll().find(usr => usr.id == userId);
     if (user) {
+        //toggle the view on mobile
+        toggleView();
         //show the person on the main view
         mainView.classList.add("flex", "flex-col", "items-center", "justify-center");
         mainView.innerHTML = `
-            <div class="card flex flex-col items-center justify-center">
+            <div class="${window.innerWidth > 700 ? "card": ""} card-sm flex flex-col items-center justify-center">
                 <p class="text-xs text-grey" style="margin: 0;">@${user.username}</p>
                 <img src="../assets/images/avatar.jpg" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
                 <p>${user.firstName} ${user.surname}</p>
