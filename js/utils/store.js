@@ -38,6 +38,23 @@ export class Store{
         }
         return [];
     }
+    remove(value) {
+        const data = this.getAll();
+
+        let filtered;
+
+        if (typeof value === "function") {
+            //for object arrays
+            //filter by values that return true for the condition/function given
+            filtered = data.filter(item => !value(item));
+        } else {
+            //direct comparison for non-object arrays
+            filtered = data.filter(item => item !== value);
+        }
+
+        localStorage.setItem(this.key, JSON.stringify(filtered));
+    }
+
 }
 
 

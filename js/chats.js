@@ -14,6 +14,7 @@ const sessionUser = JSON.parse(sessionStorage.getItem("session"));
 const chatStore = new Store("chats");
 const userStore = new Store("users");
 const isGroupsChat = location.href.includes("groups.html");
+const onlineUsers = new Store("online").getAll();
 
 //event listeners
 window.addEventListener("load", () => {
@@ -31,11 +32,13 @@ window.addEventListener("load", () => {
 searchInput.addEventListener("change", (e) => getUsers(searchInput.value));
 //listen for events on localstorage chats key
 window.addEventListener("storage", (e) => {
+
+    const chats = chatStore.getAll();
+    const chatId = chatIdElement.value;
+    const currentChat = chats.find(chat => chat.id == chatId);
+
     if (e.key == "chats") {
         displayChats();
-        const chats = JSON.parse(e.newValue);
-        const chatId = chatIdElement.value;
-        const currentChat = chats.find(chat => chat.id == chatId);
         if (currentChat) {
             renderMessages(currentChat);
         }
@@ -166,8 +169,9 @@ function showSelectedChat(chatId) {
             <a href="./chat.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
             <img class='avatar' src='../assets/images/avatar.jpg' />
             <span>
-                <p>${chat.type == "group" ? chat.name : user.firstName + " "+ user.surname}</p>
-                ${user.isOnline ? `<p class='text-success text-xs'></p>` : `<p class='text-error text-xs'>Offline</p>`}
+                <p>${chat.type == "group" ? chat.name : user.firstName + " " + user.surname}</p>
+                ${chat.type == "group" ? `<p class="text-xs">${chat.users.length} members</p>` :
+                onlineUsers.includes(userId) ? `<p id="onlineStatus" class='text-success text-xs'>online</p>` : `<p id="onlineStatus" class='text-error text-xs'>offline</p>` }
             </span>   
         `
         //display the chat input container

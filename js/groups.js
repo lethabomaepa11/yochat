@@ -4,6 +4,7 @@ import { Store } from "./utils/store.js";
 
 
 const sessionUser = JSON.parse(sessionStorage.getItem("session"));
+const alert = new Alert();
 const chatStore = new Store("chats");
 let selectedUsers = [];
 
@@ -12,11 +13,20 @@ window.createGroupChat = createGroupChat;
 function createGroupChat() {
     const users = selectedUsers;
     const name = document.getElementById("groupNameInput").value;
-    const chat = new Chat([sessionUser?.id, ...users],"group", name);
-    const alert = new Alert();
+    if (!name) {
+        alert.show("error", "Group name cannot be empty");
+        return;
+    }
+    if (selectedUsers.length < 2) {
+        alert.show("error", "Group needs 2 or more people");
+        return;
+    }
+    const chat = new Chat([sessionUser?.id, ...users], "group", name);
+    
     chatStore.insert(chat);
     location.href = `./groups.html?c=${chat.id}`;
 }
+
 
 window.toggleModal = () => {
     const overlay = document.getElementById("overlay");

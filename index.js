@@ -1,3 +1,5 @@
+import { OnlineStatus } from "./js/utils/statuses.js";
+
 //check the current page the user is in and if unauthenticated, redirect them to login
 const publicPages = ["index.html", "login.html", "signup.html"];
 const user = sessionStorage.getItem("session");
@@ -10,16 +12,9 @@ if (!user && !publicPages.includes(currentPage)) {
     location.href = "./login.html"
 }
 
-function renderNav() {
-    /**
-     * TODO
-     * Renders navigation as sidebar for desktop or bottom nav for mobile
-     * It will also check the active page and show.
-     * 
-     */
-    if (window.innerWidth < 700) {
-        //render the bottom nav
-    } else {
-        //render the sidebar
-    }
-}
+//maintain online status
+const onlineStatus = new OnlineStatus();
+window.addEventListener("load", onlineStatus.set);
+window.addEventListener("unload", () => {
+    onlineStatus.remove()
+});

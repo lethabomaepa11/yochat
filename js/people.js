@@ -16,6 +16,12 @@ const chatStore = new Store("chats");
 document.addEventListener("load", getUsers());
 searchInput.addEventListener("change", (e) => getUsers(searchInput.value));
 
+window.addEventListener("storage", (e) => {
+    if (e.key == "online") {
+        getUsers();
+    }
+})
+
 
 function getUsers(key = "*") {
     const userStore = new Store("users");
@@ -48,6 +54,7 @@ function displayUsers(users = []) {
 
     //display the users
     const list = document.createElement("ul");
+    const onlineUsers = new Store("online").getAll();
     users.forEach(user => {
         const item = document.createElement("li");
         item.addEventListener("click", () => showSelectedUser(user.id))
@@ -56,7 +63,9 @@ function displayUsers(users = []) {
                 <img class='avatar' src='../assets/images/avatar.jpg'/>
                 <span>
                     <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
-                    <p class='text-success text-xs'>Online</p>
+                    <p class='${onlineUsers.includes(user.id) ? 'text-success' : 'text-error'} text-xs'>
+                        ${onlineUsers.includes(user.id) ? 'online' : 'offline'}
+                    </p>
                 </span>
             </div>`
         list.appendChild(item);
