@@ -1,0 +1,128 @@
+/* Fonts */
+@font-face {
+  font-family: "Inter";
+  src: url(./assets/fonts/Inter/Inter-VariableFont_opsz\,wght.ttf);
+}
+
+:root {
+  --primary: #8a2be2;
+  --secondary: #141212;
+  --background: #0b0909;
+  --border-color: #555252;
+  --error: #db6f6f;
+  --success: #34c759;
+  --radius: 10px;
+}
+
+/* Element styles */
+body {
+  color: white;
+  font-family: Inter;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle, var(--secondary) 1px, transparent 1px),
+    radial-gradient(circle, var(--secondary), transparent 1px);
+  background-size: 8px 10px;
+}
+
+a {
+  color: var(--primary);
+}
+.form-container {
+  border-radius: var(--radius);
+  padding: 20px;
+  min-width: 400px;
+  background-color: var(--secondary);
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form-field {
+  display: grid;
+}
+button,
+input,
+textarea {
+  padding: 10px;
+  border: none;
+}
+input,
+textarea {
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  background-color: var(--secondary);
+  color: white;
+}
+button {
+  border-radius: 25px;
+}
+
+/* An alert element */
+.alert {
+  border: 1px solid var(--border-color);
+  background-color: var(--background);
+  border-radius: var(--radius);
+  padding: 5px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  transition: all 2s ease-in-out;
+}
+
+.alert.error {
+  background-color: var(--error);
+}
+.alert.success {
+  background-color: var(--success);
+}
+/* Utility classes for styling */
+
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.justify-center {
+  justify-content: center;
+}
+.items-center {
+  align-items: center;
+}
+.bg-primary {
+  background-color: var(--primary);
+  color: white;
+}
+.bg-primary-text {
+  color: white;
+}
+.text-primary {
+  color: var(--primary);
+}
+.bg-seconday {
+  background-color: var(--secondary);
+}
+.text-secondary {
+  color: var(--secondary);
+}
+.text-error {
+  color: var(--error);
+}
+.text-success {
+  color: var(--success);
+}
+.bg {
+  background-color: var(--background);
+}
+/* Mobile styles */
+@media screen and (max-width: 600px) {
+  .form-container {
+    background-color: inherit;
+  }
+
+  .sm-flex-col {
+    flex-direction: column;
+  }
+}

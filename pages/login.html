@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to YoChat!</title>
+    <link rel="stylesheet" href="../global.css">
+</head>
+
+<body>
+    <div class="flex flex-col items-center justify-center">
+        <div class=" form-container">
+            <h1>Login to YoChat!</h1>
+            <p id="loginError" class="text-error"></p>
+            <form id="loginForm" class="flex flex-col">
+                <span class="form-field">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" required/>
+                </span>
+
+                <span class="form-field">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" required/>
+                </span>
+                <button type="submit" class="bg-primary">
+                    Login
+                </button>
+
+                <span>
+                    Do not have an account?
+                    <a href="./signup.html">Signup</a>
+                </span>
+            </form>
+
+        </div>
+    </div>
+    
+    <script type="module" src="../js/login.js"></script>
+</body>
+
+</html>
