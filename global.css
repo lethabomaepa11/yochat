@@ -29,10 +29,10 @@ a {
   color: var(--primary);
 }
 .form-container {
-  border: 1px solid var(--border-color);
   border-radius: var(--radius);
   padding: 20px;
   min-width: 400px;
+  background-color: var(--secondary);
 }
 form {
   display: flex;
@@ -45,14 +45,18 @@ form {
 button,
 input,
 textarea {
-  border-radius: var(--radius);
   padding: 10px;
+  border: none;
 }
 input,
 textarea {
+  border-radius: var(--radius);
   border: 1px solid var(--border-color);
   background-color: var(--secondary);
   color: white;
+}
+button {
+  border-radius: 25px;
 }
 
 /* An alert element */
@@ -89,6 +93,7 @@ textarea {
 }
 .bg-primary {
   background-color: var(--primary);
+  color: white;
 }
 .bg-primary-text {
   color: white;
@@ -111,9 +116,13 @@ textarea {
 .bg {
   background-color: var(--background);
 }
-
+/* Mobile styles */
 @media screen and (max-width: 600px) {
   .form-container {
-    border: none;
+    background-color: inherit;
+  }
+
+  .sm-flex-col {
+    flex-direction: column;
   }
 }

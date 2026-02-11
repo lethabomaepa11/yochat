@@ -13,11 +13,15 @@
             <p id="signupError" class="text-error"></p>
             <form id="signupForm" name="signupForm">
                 <!-- Displayed: inline on Desktop, Block on mobile -->
-                <span class="form-field">
-                    <label for="firstName">First Name</label>
-                    <input type="text" name="firstName" id="firstName" required/>
-                    <label for="surname">Surname</label>
-                    <input type="text" name="surname" id="surname" required/>
+                <span class="form-field flex sm-flex-col" style="gap:10px;">
+                    <span class="form-field">
+                        <label for="firstName">First Name</label>
+                        <input type="text" name="firstName" id="firstName" required />
+                    </span>
+                    <span class="form-field">
+                        <label for="surname">Surname</label>
+                        <input type="text" name="surname" id="surname" required />
+                    </span>
                 </span>
                 <span class="form-field">
                     <label for="username">Username</label>
@@ -33,7 +37,7 @@
                     <label for="confirmPassword">Confirm Password</label>
                     <input type="password" name="confirmPassword" id="confirmPassword" required/>
                 </span>
-                <button type="submit">
+                <button type="submit" class="bg-primary">
                     Signup
                 </button>
 

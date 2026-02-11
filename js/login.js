@@ -16,6 +16,7 @@ function handleSubmit(e) {
     if (user) {
         //decrypt the password
         if (user.password == password) {
+            sessionStorage.setItem("session", JSON.stringify(user));
             alert.show("success", "Logged in successfully, redirecting...")
             location.href = "../pages/chat.html";
         }
