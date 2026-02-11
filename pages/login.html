@@ -10,18 +10,18 @@
 
 <body>
     <div class="flex flex-col items-center justify-center">
-        <div class="flex flex-col">
+        <div class=" form-container">
             <h1>Login to YoChat!</h1>
-            <p id="loginError" class="text-error">Invalid Credentials!</p>
+            <p id="loginError" class="text-error"></p>
             <form id="loginForm" class="flex flex-col">
-                <span>
+                <span class="form-field">
                     <label for="username">Username</label>
-                    <input type="text" name="username" id="username" />
+                    <input type="text" name="username" id="username" required/>
                 </span>
 
-                <span>
+                <span class="form-field">
                     <label for="password">Password</label>
-                    <input type="password" name="password" id="password" />
+                    <input type="password" name="password" id="password" required/>
                 </span>
                 <button type="submit">
                     Login
@@ -35,7 +35,7 @@
 
         </div>
     </div>
-
+    
     <script type="module" src="../js/login.js"></script>
 </body>
 

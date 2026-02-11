@@ -1,3 +1,4 @@
+import { Alert } from "./utils/alert.js";
 import { Store } from "./utils/store.js";
 
 //event listeners
@@ -5,6 +6,7 @@ document.getElementById("loginForm").addEventListener("submit", (e) => handleSub
 
 
 function handleSubmit(e) {
+    const alert = new Alert();
     e.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -14,14 +16,15 @@ function handleSubmit(e) {
     if (user) {
         //decrypt the password
         if (user.password == password) {
+            alert.show("success", "Logged in successfully, redirecting...")
             location.href = "../pages/chat.html";
         }
         else {
-            alert("Wrong Password");
+            alert.show("error", "Wrong password");
         }
         return;
     }
 
-    alert("No user exists for this username");
+    alert.show("error", "No user exists for this username");
     return;
 }

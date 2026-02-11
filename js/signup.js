@@ -1,7 +1,10 @@
 import { User } from "./models/User.js";
 import { Store } from "./utils/store.js";
 
-function isUniqueUsername(username) {
+function showError(text) {
+    document.getElementById("signupError").innerText = text;
+}
+function validateUsername(username) {
     /**
      * Will be used in signup and edit profile
      * Accepts a username and checks if it is not a duplicate then returns the result
@@ -29,13 +32,19 @@ function handleSubmit(e) {
     const password = document.getElementById("password").value;
 
     //make sure that the username is indeed unique
-    if (isUniqueUsername(username)) {
+    if (validateUsername(username)) {
         //continue
         if (firstName.length && surname.length && username.length && password.length) {
             const userStore = new Store("users");
             const user = new User(firstName, surname, username, password);
             userStore.insert(user);
         }
+        else {
+            showError("Please enter all the required information.");
+        }
+    }
+    else {
+        showError("Username already exists, try a different one.")
     }
 
 

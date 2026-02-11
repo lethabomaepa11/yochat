@@ -4,7 +4,6 @@
   src: url(./assets/fonts/Inter/Inter-VariableFont_opsz\,wght.ttf);
 }
 
-/* Colors */
 :root {
   --primary: #8a2be2;
   --secondary: #141212;
@@ -12,9 +11,86 @@
   --border-color: #555252;
   --error: #db6f6f;
   --success: #34c759;
+  --radius: 10px;
 }
 
-/* Colors as classes for reusability on inline styling */
+/* Element styles */
+body {
+  color: white;
+  font-family: Inter;
+  opacity: 0.8;
+  /* Pattern */
+  background-image: radial-gradient(
+    ellipse farthest-corner at 10px 10px,
+    var(--secondary),
+    var(--background) 50%,
+    var(--background) 50%
+  );
+  background-size: 10px 10px;
+}
+
+a {
+  color: var(--primary);
+}
+.form-container {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-width: 400px;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form-field {
+  display: grid;
+}
+button,
+input,
+textarea {
+  border-radius: var(--radius);
+  padding: 10px;
+}
+input,
+textarea {
+  border: 1px solid var(--border-color);
+  background-color: var(--secondary);
+  color: white;
+}
+
+/* An alert element */
+.alert {
+  border: 1px solid var(--border-color);
+  background-color: var(--background);
+  border-radius: var(--radius);
+  padding: 5px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  transition: all 2s ease-in-out;
+}
+
+.alert.error {
+  background-color: var(--error);
+}
+.alert.success {
+  background-color: var(--success);
+}
+/* Utility classes for styling */
+
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.justify-center {
+  justify-content: center;
+}
+.items-center {
+  align-items: center;
+}
 .bg-primary {
   background-color: var(--primary);
 }
@@ -39,28 +115,9 @@
 .bg {
   background-color: var(--background);
 }
-/* Colors as Classes end here */
 
-body {
-  background-color: var(--background);
-  color: white;
-  font-family: Inter;
-}
-
-a {
-  color: var(--primary);
-}
-
-/* Utility classes for positioning */
-.flex {
-  display: flex;
-}
-.flex-col {
-  flex-direction: column;
-}
-.justify-center {
-  justify-content: center;
-}
-.items-center {
-  align-items: center;
+@media screen and (max-width: 600px) {
+  .form-container {
+    border: none;
+  }
 }
