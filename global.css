@@ -30,7 +30,8 @@ body {
 a {
   color: var(--primary);
 }
-.form-container {
+.form-container,
+.card {
   border-radius: var(--radius);
   padding: 20px;
   min-width: 400px;
@@ -49,6 +50,7 @@ input,
 textarea {
   padding: 10px;
   border: none;
+  width: 100%;
 }
 input,
 textarea {
@@ -56,11 +58,11 @@ textarea {
   border: 1px solid var(--border-color);
   background-color: var(--secondary);
   color: white;
-  width: 100%;
 }
 button {
   border-radius: 25px;
   background-color: var(--secondary);
+  cursor: pointer;
 }
 h1 {
   margin: 0;
@@ -71,6 +73,10 @@ h1 {
   background-color: var(--secondary);
   height: 100vh;
   padding-inline: 10px;
+}
+
+#mainView {
+  width: 100%;
 }
 #bottomNav {
   display: none;
@@ -178,6 +184,9 @@ ul li {
 .text-secondary {
   color: var(--secondary);
 }
+.text-grey {
+  color: var(--border-color);
+}
 .text-error {
   color: var(--error);
 }
@@ -202,6 +211,10 @@ ul li {
   }
   #middleView {
     width: 100svw;
+  }
+  #mainView {
+    width: 100svw;
+    display: hidden;
   }
   #bottomNav {
     position: fixed;

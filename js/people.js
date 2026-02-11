@@ -1,9 +1,11 @@
-import {Store} from "./utils/store.js"
+import { Store } from "./utils/store.js"
+import { Alert } from "./utils/alert.js"
 
 
 //global variables/elements
 const peopleList = document.getElementById("peopleList");
 const searchInput = document.getElementById("searchInput");
+const mainView = document.getElementById("mainView");
 
 //event listeners
 document.addEventListener("load", getUsers());
@@ -40,6 +42,7 @@ function displayUsers(users = []) {
     const list = document.createElement("ul");
     users.forEach(user => {
         const item = document.createElement("li");
+        item.addEventListener("click", () => showSelectedUser(user.id))
         item.innerHTML =
             `<div id='${user.username}' class='chat-list-item'>
                 <img class='avatar' src='../assets/images/avatar.jpg'/>
@@ -53,4 +56,26 @@ function displayUsers(users = []) {
     //append the list to the parent node
     peopleList.appendChild(list);
 
+}
+
+function showSelectedUser(userId) {
+    const userStore = new Store("users");
+    const user = userStore.getAll().find(usr => usr.id == userId);
+    if (user) {
+        //show the person on the main view
+        mainView.classList.add("flex", "flex-col", "items-center", "justify-center");
+        mainView.innerHTML = `
+            <div class="card flex flex-col items-center justify-center">
+                <p class="text-xs text-grey" style="margin: 0;">@${user.username}</p>
+                <img src="../assets/images/avatar.jpg" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
+                <p>${user.firstName} ${user.surname}</p>
+                <p class="text-success text-xs"><b>Online</b></p>
+                <button class="bg-primary">Say Hi!</button>
+            </div>
+        `
+    }
+    else {
+        const alert = new Alert();
+        alert.show("error", "An error has occured, please reload page and try again");
+    }
 }
