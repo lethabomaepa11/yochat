@@ -87,7 +87,7 @@ function showSelectedUser(userId) {
                 <img src="../assets/images/avatar.jpg" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
                 <p>${user.firstName} ${user.surname}</p>
                 <p class="text-success text-xs"><b>Online</b></p>
-                <button class="bg-primary">Say Hi!</button>
+                <button class="bg-primary" onclick="initiateChat('${user.id}')">Say Hi!</button>
             </div>
         `
     }
@@ -95,4 +95,8 @@ function showSelectedUser(userId) {
         const alert = new Alert();
         alert.show("error", "An error has occured, please reload page and try again");
     }
+}
+
+function initiateChat(userId) {
+    
 }

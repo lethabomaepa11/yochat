@@ -17,4 +17,9 @@ function renderNav() {
      * It will also check the active page and show.
      * 
      */
+    if (window.innerWidth < 700) {
+        //render the bottom nav
+    } else {
+        //render the sidebar
+    }
 }
