@@ -18,15 +18,11 @@
 body {
   color: white;
   font-family: Inter;
-  opacity: 0.8;
-  /* Pattern */
-  background-image: radial-gradient(
-    ellipse farthest-corner at 10px 10px,
-    var(--secondary),
-    var(--background) 50%,
-    var(--background) 50%
-  );
-  background-size: 10px 10px;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle, var(--secondary) 1px, transparent 1px),
+    radial-gradient(circle, var(--secondary), transparent 1px);
+  background-size: 8px 10px;
 }
 
 a {
