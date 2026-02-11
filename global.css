@@ -196,6 +196,9 @@ ul li {
 .bg {
   background-color: var(--background);
 }
+.bg-background {
+  background-color: var(--background);
+}
 .chat-view {
   display: flex;
   flex-direction: column;
