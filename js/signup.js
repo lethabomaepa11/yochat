@@ -1,4 +1,5 @@
 import { User } from "./models/User.js";
+import { Alert } from "./utils/alert.js";
 import { Store } from "./utils/store.js";
 
 function showError(text) {
@@ -30,21 +31,26 @@ function handleSubmit(e) {
     const surname = document.getElementById("surname").value;
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
+    const alert = new Alert();
 
     //make sure that the username is indeed unique
     if (validateUsername(username)) {
         //continue
+        
         if (firstName.length && surname.length && username.length && password.length) {
             const userStore = new Store("users");
             const user = new User(firstName, surname, username, password);
             userStore.insert(user);
+            alert.show("success", "Successfully created an account, redirecting");
+            sessionStorage.setItem("session", JSON.stringify(user));
+            location.href = "./chat.html";
         }
         else {
-            showError("Please enter all the required information.");
+            alert.show("error","Please enter all the required information.");
         }
     }
     else {
-        showError("Username already exists, try a different one.")
+        alert.show("error","Username already exists, try a different one.")
     }
 
 

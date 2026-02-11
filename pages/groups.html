@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chats | YoChat!</title>
+    <title>Groups | YoChat!</title>
     <link href="../assets/icons/fontawesome/css/fontawesome.css" rel="stylesheet" />
     <link href="../assets/icons/fontawesome/css/brands.css" rel="stylesheet" />
     <link href="../assets/icons/fontawesome/css/solid.css" rel="stylesheet" />
@@ -17,9 +17,9 @@
     <aside>
         <ul class="flex flex-col">
             <a href="./chat.html">
-                <li title="Chat"><i class="fa-solid fa-comment-dots"></i></li>
+                <li title="Chat"><i class="fa-solid fa-comment-dots" style="color: white;"></i></li>
             </a>
-            <a href="./groups.html" style="color: white;">
+            <a href="./groups.html">
                 <li title="Groups"><i class="fa-solid fa-user-group"></i></li>
             </a>
             <a href="./people.html" style="color: white;">
@@ -32,19 +32,24 @@
     </aside>
     <!-- Where the list of people will be shown -->
     <div id="middleView">
-        <h1>Chats</h1>
-        <input type="search" placeholder="Search chats" name="searchInput" id="searchInput" />
+        <span class="flex" style="justify-content: space-between;">
+            <h1>Groups</h1>
+            <button class="bg-primary" onclick="toggleModal()" style="width: fit-content;padding: 1px;border-radius: 100%;">
+                <i class="fa fa-plus" style="font-size: 15px;"></i>
+            </button>
+        </span>
+        <input type="search" placeholder="Search groups" name="searchInput" id="searchInput" />
         <div id="chatList" class="list">
         </div>
     </div>
     <main id="mainView" class="chat-view">
         <header id='chatHeader' class='chat-list-item'>
-            
+
         </header>
         <div class="messages-view" id="messagesView">
         </div>
         <div class="chat-input" id="chatInputContainer">
-            
+
         </div>
 
     </main>
@@ -65,9 +70,25 @@
             </a>
         </ul>
     </nav>
+    <!-- Create group chat modal -->
+     <div class="overlay" id="overlay" onclick="toggleModal()">
+     </div>
+    <div id="modal">
+        <span class="form-field">
+            <label for="groupNameInput">Group name</label>
+            <input type="text" name="groupNameInput" id="groupNameInput" required />
+        </span>
+        <div id="availUsers">
+            <p>Select users</p>
+        </div>
+        <button onclick="createGroupChat()" class="bg-primary">Create</button>
 
+    </div>
     <script type="module" src="../index.js"></script>
     <script type="module" src="../js/chats.js"></script>
+    <script type="module" src="../js/groups.js"></script>
 </body>
+
+
 
 </html>

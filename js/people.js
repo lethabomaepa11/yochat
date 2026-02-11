@@ -1,5 +1,6 @@
 import { Store } from "./utils/store.js"
 import { Alert } from "./utils/alert.js"
+import { Chat } from "./models/Chat.js";
 
 
 //global variables/elements
@@ -7,6 +8,9 @@ const peopleList = document.getElementById("peopleList");
 const searchInput = document.getElementById("searchInput");
 const middleView = document.getElementById("middleView");
 const mainView = document.getElementById("mainView");
+const sessionUser = JSON.parse(sessionStorage.getItem("session"));
+const chatStore = new Store("chats");
+
 
 //event listeners
 document.addEventListener("load", getUsers());
@@ -31,6 +35,9 @@ function getUsers(key = "*") {
 function displayUsers(users = []) {
     peopleList.replaceChildren();//clearing items
 
+    //getting the session
+    const sessionUser = JSON.parse(sessionStorage.getItem("session"));
+
     //if no users are found
     if (!users.length) {
         const message = document.createElement("p");
@@ -48,7 +55,7 @@ function displayUsers(users = []) {
             `<div id='${user.username}' class='chat-list-item'>
                 <img class='avatar' src='../assets/images/avatar.jpg'/>
                 <span>
-                    <p>${user.firstName} ${user.surname}</p>
+                    <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
                     <p class='text-success text-xs'>Online</p>
                 </span>
             </div>`
@@ -73,6 +80,22 @@ function toggleView() {
     middleView.style.display = "none";
     mainView.style.display = "block";
 }
+// create a private chat
+function initiateChat(userId) {
+    const chat = new Chat([userId, sessionUser?.id]);
+    const alert = new Alert();
+    const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
+
+    //check if the chat between the two does not exist
+    if (chats.some(c => c.users.includes(userId) && c.type != "group")) {
+        location.href = './chat.html';
+        return;
+    }
+    chatStore.insert(chat);
+    location.href = `./chat.html?c=${chat.id}`;
+}
+
+window.initiateChat = initiateChat;
 function showSelectedUser(userId) {
     const userStore = new Store("users");
     const user = userStore.getAll().find(usr => usr.id == userId);
@@ -97,6 +120,3 @@ function showSelectedUser(userId) {
     }
 }
 
-function initiateChat(userId) {
-    
-}
