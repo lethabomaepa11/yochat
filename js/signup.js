@@ -5,23 +5,27 @@ import { Store } from "./utils/store.js";
 function showError(text) {
     document.getElementById("signupError").innerText = text;
 }
-function validateUsername(username) {
+export function isUniqueUsername(username, userId = null) {
     /**
      * Will be used in signup and edit profile
      * Accepts a username and checks if it is not a duplicate then returns the result
      * @param {string} username
+     * @param {string} userId - optional: if the user is already logged in, to filter them out
      * @returns {boolean} - The result
     */
-    const rawData = localStorage.getItem("users");
-    const users = rawData ? JSON.parse(rawData) : []; 
+    let users = new Store("users").getAll();
 
     if (users.length == 0) {
         //no users
         return true;
     }
 
+    if (userId) {
+        users = users.filter(user => user.id != userId);
+    }
+
     //return the opposite of if the username already exists.
-    return !users.some(user => user.username == username);
+    return !users.some(user => user.username == username.trim());
 }
 
 function handleSubmit(e) {
@@ -34,7 +38,7 @@ function handleSubmit(e) {
     const alert = new Alert();
 
     //make sure that the username is indeed unique
-    if (validateUsername(username)) {
+    if (isUniqueUsername(username)) {
         //continue
         
         if (firstName.length && surname.length && username.length && password.length) {
@@ -57,5 +61,6 @@ function handleSubmit(e) {
 }
 
 //event listeners
-
-document.querySelector("#signupForm").addEventListener("submit", (e) => handleSubmit(e))
+if (location.href.includes("signup.html")) {
+    document.querySelector("#signupForm").addEventListener("submit", (e) => handleSubmit(e))
+}

@@ -1,6 +1,7 @@
 import { Store } from "./utils/store.js"
 import { Alert } from "./utils/alert.js"
 import { Chat } from "./models/Chat.js";
+import { getMutualGroups } from "./groups.js";
 
 
 //global variables/elements
@@ -105,12 +106,15 @@ function initiateChat(userId) {
 }
 
 window.initiateChat = initiateChat;
+
 function showSelectedUser(userId) {
     const userStore = new Store("users");
     const user = userStore.getAll().find(usr => usr.id == userId);
     if (user) {
         //toggle the view on mobile
         toggleView();
+        const mutualGroups = getMutualGroups(userId);
+        const isOnline = new Store("online").getAll().includes(userId);
         //show the person on the main view
         mainView.classList.add("flex", "flex-col", "items-center", "justify-center");
         mainView.innerHTML = `
@@ -118,8 +122,20 @@ function showSelectedUser(userId) {
                 <p class="text-xs text-grey" style="margin: 0;">@${user.username}</p>
                 <img src="../assets/images/avatar.jpg" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
                 <p>${user.firstName} ${user.surname}</p>
-                <p class="text-success text-xs"><b>Online</b></p>
-                <button class="bg-primary" onclick="initiateChat('${user.id}')">Say Hi!</button>
+                <p id="onlineStatus" class="${isOnline ? "text-success" : "text-error"} text-xs"><b>${isOnline ? "online" : "offline"}</b></p>
+                <div>
+                    <p>Mutual Groups:</p>
+                    <p id="mutualGroups" class="text-xs">
+                        ${!mutualGroups.length ? "None" : ""}
+                        ${mutualGroups.map(group => {
+                            return `<a href="./groups.html?c=${group.id}">
+                                ${group.name} (${group.users.length} members)
+                             </a>
+                            `
+                        })}
+                    </p>
+                </div>
+                <button class="bg-primary w-full" onclick="initiateChat('${user.id}')">Say Hi!</button>
             </div>
         `
     }

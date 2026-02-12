@@ -75,3 +75,10 @@ function renderUsers() {
     })
     document.getElementById("availUsers").replaceChildren(list);
 }
+
+export function getMutualGroups(userId){
+    const sessionUser = JSON.parse(sessionStorage.getItem("session"));
+
+    const groups = new Store("chats").getAll().filter(chat => chat.type == "group");
+    return groups.filter(group => group.users.includes(userId) && group.users.includes(sessionUser.id));
+}
