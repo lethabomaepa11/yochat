@@ -58,6 +58,7 @@ function displayUsers(users = []) {
     const onlineUsers = new Store("online").getAll();
     users.forEach(user => {
         const item = document.createElement("li");
+        
         item.addEventListener("click", () => showSelectedUser(user.id))
         item.innerHTML =
             `<div id='${user.username}' class='chat-list-item'>
@@ -108,6 +109,12 @@ function initiateChat(userId) {
 window.initiateChat = initiateChat;
 
 function showSelectedUser(userId) {
+
+    const alert = new Alert();
+    if (userId == sessionUser.id) {
+        alert.show("error", "Cannot create a chat with yourself");
+        return;
+    }
     const userStore = new Store("users");
     const user = userStore.getAll().find(usr => usr.id == userId);
     if (user) {
