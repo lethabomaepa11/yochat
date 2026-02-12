@@ -56,7 +56,7 @@ function showUserProfile() {
                 ${window.innerWidth < 700 ?
                 `<span class="flex items-center w-full" style="justify-content: space-between;margin: 5px">
                     <h1>My Profile</h1>
-                    <button class="chat-list-item" style="color: red;padding: 10px;width: max-content">Logout</button>
+                    <button class="chat-list-item logoutBtn" style="color: red;padding: 10px;width: max-content">Logout</button>
                 </span>` : ""}
                 <p class="text-xs text-grey" style="margin: 0;">@${user.username}</p>
                 <img src="../assets/images/avatar.jpg" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
@@ -65,6 +65,17 @@ function showUserProfile() {
                 ${formTemplate}
             </div>
         `
+        console.log(document.getElementsByClassName("logoutBtn"));
+        const logoutBtns = document.getElementsByClassName("logoutBtn");
+        for (let i = 0; i < logoutBtns.length; i++) {
+            logoutBtns[i].addEventListener("click", handleLogout);
+        }
+        function handleLogout(){
+            if (sessionUser) {
+                sessionStorage.clear();
+            }
+            location.reload();
+        }
 
         document.getElementById("profileForm").addEventListener("submit", (e) => handleSubmit(e));
         const usernameInput = document.getElementById("username");
@@ -87,7 +98,6 @@ function showUserProfile() {
     
 
 }
-
 function handleSubmit(e) {
     e.preventDefault();
     const alert = new Alert();
