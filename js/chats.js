@@ -31,7 +31,7 @@ window.addEventListener("load", () => {
     }
     
 });
-searchInput.addEventListener("change", (e) => getUsers(searchInput.value));
+searchInput.addEventListener("change", (e) => displayChats(searchInput.value));
 //listen for events on localstorage chats key
 window.addEventListener("storage", (e) => {
 
@@ -48,10 +48,10 @@ window.addEventListener("storage", (e) => {
 })
 
 
- function displayChats() {
+ function displayChats(value = "") {
 
     //get chats that this user is in
-    const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
+     let chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
     //if no chats are found
     if (!chats.length) {
         const message = document.createElement("p");
@@ -60,6 +60,18 @@ window.addEventListener("storage", (e) => {
         return;
     }
 
+     //if the search value is not empty
+     if (value) {
+         value = value.trim().toLowerCase();
+         chats = chats.filter(chat => {
+             if (chat.type == "group") {
+                 return chat.name.toLowerCase().includes(value);
+             }
+
+             return chat.messages?.at(-1)?.content?.toLowerCase().includes(value);
+             
+         })
+     }
     //display the chats
     const list = document.createElement("ul");
     chats.forEach(async(chat) => {
@@ -202,12 +214,20 @@ async function showSelectedChat(chatId) {
         `
 
 
-        document.getElementById("chatInput").addEventListener("keydown", () => {
+        document.getElementById("chatInput").addEventListener("keydown", (e) => {
+
+            if (window.innerWidth > 700) {
+                if (!e.shiftKey && e.key.toLowerCase() == "enter") {
+                    sendMessage(chatId);
+                }
+            }
+            
             //current chat
             if (!typingStore.getAll().some(t => t.chatId == chatId && t.userId == sessionUser.id)) {
                 typingStore.insert({ chatId, userId: sessionUser.id });
             }
         })
+        
         document.getElementById("chatInput").addEventListener("change", () => {
             //current chat
             typingStore.remove((t) => t.chatId == chatId && t.userId == sessionUser.id);
