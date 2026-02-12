@@ -49,6 +49,7 @@ form {
 .form-field {
   display: grid;
 }
+.btn,
 button,
 input,
 textarea {
@@ -62,6 +63,7 @@ textarea {
   background-color: var(--secondary);
   color: white;
 }
+.btn,
 button {
   border-radius: 25px;
   background-color: var(--secondary);
