@@ -74,7 +74,7 @@ function displayChats() {
 
             item.addEventListener("click", () => showSelectedChat(chat.id))
             item.innerHTML =
-                `<div id='${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
+                `<div id='div-${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
                     <img class='avatar' src='../assets/images/avatar.jpg'/>
                     <span>
                         <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
@@ -158,6 +158,7 @@ function showSelectedChat(chatId) {
     //get the chat
     const chat = chatStore.getAll().find(c => c.id == chatId);
     if (chat) {
+        //get the other user
         const userId = chat.users.find(id => id != sessionUser.id);
         const user = userStore.getAll().find(u => u.id == userId);
         //toggle the view on mobile
@@ -184,6 +185,25 @@ function showSelectedChat(chatId) {
 
         displayChats();
         renderMessages(chat);
+
+        //event listener for the onlineStatus, only updates the onlineStatus element
+        window.addEventListener("storage", (e) => {
+            if (e.key == "online") {
+                const onlineUsers = new Store("online").getAll();
+                const onlineStatusEl = document.getElementById("onlineStatus");
+                //update the online status in the current chat if the user affected is in this chat
+                if (onlineUsers.includes(userId)) {
+                    onlineStatusEl.innerHTML = "online";
+                    onlineStatusEl.classList.remove("text-error")
+                    onlineStatusEl.classList.add("text-success");
+                }
+                else {
+                    onlineStatusEl.innerHTML = "offline";
+                    onlineStatusEl.classList.add("text-error")
+                    onlineStatusEl.classList.remove("text-success");
+                }
+            }
+        })
         
     }
     else {
