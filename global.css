@@ -312,3 +312,7 @@ ul li {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+#availusers ul {
+  height: 100px;
+  overflow-y: auto;
+}

@@ -14,6 +14,7 @@ const sessionUser = JSON.parse(sessionStorage.getItem("session"));
 const chatStore = new Store("chats");
 const userStore = new Store("users");
 const isGroupsChat = location.href.includes("groups.html");
+const onlineUsers = new Store("online").getAll();
 
 //event listeners
 window.addEventListener("load", () => {
@@ -31,11 +32,13 @@ window.addEventListener("load", () => {
 searchInput.addEventListener("change", (e) => getUsers(searchInput.value));
 //listen for events on localstorage chats key
 window.addEventListener("storage", (e) => {
+
+    const chats = chatStore.getAll();
+    const chatId = chatIdElement.value;
+    const currentChat = chats.find(chat => chat.id == chatId);
+
     if (e.key == "chats") {
         displayChats();
-        const chats = JSON.parse(e.newValue);
-        const chatId = chatIdElement.value;
-        const currentChat = chats.find(chat => chat.id == chatId);
         if (currentChat) {
             renderMessages(currentChat);
         }
@@ -71,7 +74,7 @@ function displayChats() {
 
             item.addEventListener("click", () => showSelectedChat(chat.id))
             item.innerHTML =
-                `<div id='${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
+                `<div id='div-${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
                     <img class='avatar' src='../assets/images/avatar.jpg'/>
                     <span>
                         <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
@@ -155,6 +158,7 @@ function showSelectedChat(chatId) {
     //get the chat
     const chat = chatStore.getAll().find(c => c.id == chatId);
     if (chat) {
+        //get the other user
         const userId = chat.users.find(id => id != sessionUser.id);
         const user = userStore.getAll().find(u => u.id == userId);
         //toggle the view on mobile
@@ -166,8 +170,9 @@ function showSelectedChat(chatId) {
             <a href="./chat.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
             <img class='avatar' src='../assets/images/avatar.jpg' />
             <span>
-                <p>${chat.type == "group" ? chat.name : user.firstName + " "+ user.surname}</p>
-                ${user.isOnline ? `<p class='text-success text-xs'></p>` : `<p class='text-error text-xs'>Offline</p>`}
+                <p>${chat.type == "group" ? chat.name : user.firstName + " " + user.surname}</p>
+                ${chat.type == "group" ? `<p class="text-xs">${chat.users.length} members</p>` :
+                onlineUsers.includes(userId) ? `<p id="onlineStatus" class='text-success text-xs'>online</p>` : `<p id="onlineStatus" class='text-error text-xs'>offline</p>` }
             </span>   
         `
         //display the chat input container
@@ -180,6 +185,25 @@ function showSelectedChat(chatId) {
 
         displayChats();
         renderMessages(chat);
+
+        //event listener for the onlineStatus, only updates the onlineStatus element
+        window.addEventListener("storage", (e) => {
+            if (e.key == "online") {
+                const onlineUsers = new Store("online").getAll();
+                const onlineStatusEl = document.getElementById("onlineStatus");
+                //update the online status in the current chat if the user affected is in this chat
+                if (onlineUsers.includes(userId)) {
+                    onlineStatusEl.innerHTML = "online";
+                    onlineStatusEl.classList.remove("text-error")
+                    onlineStatusEl.classList.add("text-success");
+                }
+                else {
+                    onlineStatusEl.innerHTML = "offline";
+                    onlineStatusEl.classList.add("text-error")
+                    onlineStatusEl.classList.remove("text-success");
+                }
+            }
+        })
         
     }
     else {
