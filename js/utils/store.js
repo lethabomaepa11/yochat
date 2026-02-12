@@ -59,6 +59,8 @@ export class Store{
         localStorage.setItem(this._key, JSON.stringify(data));
     }
 
+
+
 }
 
 

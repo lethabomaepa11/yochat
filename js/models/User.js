@@ -4,10 +4,7 @@ export class User{
         this.firstName = firstName;
         this.surname = surname;
         this.username = username;
-        this.password = password;
-        this.securityQuestion = securityQuestion;
-        this.securityAnswer = securityAnswer;
-        this.isOnline = false;
+        this.password = btoa(password);
     }
     
 }
