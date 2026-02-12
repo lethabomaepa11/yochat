@@ -16,6 +16,7 @@ const chatStore = new Store("chats");
 const userStore = new Store("users");
 const isGroupsChat = location.href.includes("groups.html");
 const onlineUsers = new Store("online").getAll();
+const typingStore = new Store("typing");
 
 //event listeners
 window.addEventListener("load", () => {
@@ -200,14 +201,25 @@ async function showSelectedChat(chatId) {
             <button class="bg-primary" onclick="sendMessage('${chat.id}')">Send</button>
         `
 
+
+        document.getElementById("chatInput").addEventListener("keydown", () => {
+            //current chat
+            if (!typingStore.getAll().some(t => t.chatId == chatId && t.userId == sessionUser.id)) {
+                typingStore.insert({ chatId, userId: sessionUser.id });
+            }
+        })
+        document.getElementById("chatInput").addEventListener("change", () => {
+            //current chat
+            typingStore.remove((t) => t.chatId == chatId && t.userId == sessionUser.id);
+        })
         displayChats();
         renderMessages(chat);
 
         //event listener for the onlineStatus, only updates the onlineStatus element
         window.addEventListener("storage", (e) => {
+            const onlineStatusEl = document.getElementById("onlineStatus");
             if (e.key == "online") {
                 const onlineUsers = new Store("online").getAll();
-                const onlineStatusEl = document.getElementById("onlineStatus");
                 //update the online status in the current chat if the user affected is in this chat
                 if (onlineUsers.includes(userId)) {
                     onlineStatusEl.innerHTML = "online";
@@ -218,6 +230,20 @@ async function showSelectedChat(chatId) {
                     onlineStatusEl.innerHTML = "offline";
                     onlineStatusEl.classList.add("text-error")
                     onlineStatusEl.classList.remove("text-success");
+                }
+            }
+            else if (e.key == "typing") {
+                const typingUsers = new Store("typing").getAll();
+                const thisChat = typingUsers.find(u => u.chatId == chatId);
+                if (thisChat && thisChat.userId == user.id) {
+                    onlineStatusEl.innerHTML = "typing...";
+                    onlineStatusEl.classList.remove("text-error")
+                    onlineStatusEl.classList.add("text-success");
+                }
+                else {
+                    onlineStatusEl.innerHTML = "online";
+                    onlineStatusEl.classList.remove("text-error")
+                    onlineStatusEl.classList.add("text-success");
                 }
             }
         })
@@ -318,3 +344,14 @@ function sendMessage(chatId) {
     document.getElementById("chatInput").value = "";
 }
 
+
+function formatText(text) {
+    let i;
+    const tag = "*";
+    //jump to first 
+    i = text.indexOf("*");
+    while (i < text.length) {
+
+        i++;
+    }
+}
