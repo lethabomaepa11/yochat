@@ -1,4 +1,4 @@
-export default async function ({chat,getImageUrl,user,onlineUsers, userId }){
+export default async({chat,getImageUrl,user,onlineUsers, userId }) => {
     return `
             <a href="./${chat.type == "group" ? "groups" :"chat"}.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
             <img  id='profileImage' class='avatar' src='${await getImageUrl(chat.type == "group" ? chat.id : user.id)}' />

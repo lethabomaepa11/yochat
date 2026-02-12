@@ -1,4 +1,4 @@
-export default async function({chat, getImageUrl,chatIdElement}){
+export default async({chat, getImageUrl,chatIdElement}) => {
     return `<div id='${chat.name}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
                 <img class='avatar' src='${await getImageUrl(chat.id)}'/>
                 <span>

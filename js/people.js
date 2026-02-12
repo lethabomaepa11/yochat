@@ -14,19 +14,7 @@ const mainView = document.getElementById("mainView");
 const sessionUser = JSON.parse(sessionStorage.getItem("session"));
 const chatStore = new Store("chats");
 
-
-//event listeners
-document.addEventListener("load", getUsers());
-searchInput.addEventListener("change", (e) => getUsers(searchInput.value));
-
-window.addEventListener("storage", (e) => {
-    if (e.key == "online") {
-        getUsers();
-    }
-})
-
-
-function getUsers(key = "*") {
+const getUsers = (key = "*") => {
     const userStore = new Store("users");
     let result = [];
     if (key == "*" || key.toLowerCase() == "all") {
@@ -41,8 +29,8 @@ function getUsers(key = "*") {
 
     displayUsers(result)
 }
-function displayUsers(users = []) {
-    peopleList.replaceChildren();//clearing items
+const displayUsers = (users = []) => {
+    peopleList?.replaceChildren();//clearing items
 
     //getting the session
     const sessionUser = JSON.parse(sessionStorage.getItem("session"));
@@ -51,7 +39,7 @@ function displayUsers(users = []) {
     if (!users.length) {
         const message = document.createElement("p");
         message.innerText = "No users found.";
-        peopleList.appendChild(message);
+        peopleList?.appendChild(message);
         return;
     }
 
@@ -75,29 +63,42 @@ function displayUsers(users = []) {
         list.appendChild(item);
     })
     //append the list to the parent node
-    peopleList.appendChild(list);
+    peopleList?.appendChild(list);
 
 }
-function toggleView() {
+//event listeners
+document.addEventListener("load", getUsers());
+searchInput.addEventListener("change", (e) => getUsers(searchInput.value));
+
+window.addEventListener("storage", (e) => {
+    if (e.key == "online") {
+        getUsers();
+    }
+})
+
+
+
+
+export const toggleView = () => {
     if (window.innerWidth > 700) {
         //desktop, just skip this method
         return;
     }
     //main is currently active
     if (middleView.style.display == "none") {
+        //bottom nav needs to be gone
         document.getElementById("bottomNav").style.display = "grid";
         middleView.style.display = "flex";
         mainView.style.display = "none";
         return;
     }
-
     //middleView is currently active
     document.getElementById("bottomNav").style.display = "none";
     middleView.style.display = "none";
     mainView.style.display = "block";
 }
 // create a private chat
-function initiateChat(userId) {
+export const initiateChat = (userId) => {
     const chat = new Chat([userId, sessionUser?.id]);
     const alert = new Alert();
     const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
@@ -113,7 +114,7 @@ function initiateChat(userId) {
 
 window.initiateChat = initiateChat;
 
-async function showSelectedUser(userId) {
+const showSelectedUser = async(userId) => {
 
     const alert = new Alert();
     if (userId == sessionUser.id) {

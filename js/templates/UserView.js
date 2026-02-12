@@ -1,4 +1,4 @@
-export default async function ({user,getImageUrl,mutualGroups,isOnline}) {
+export default async ({user,getImageUrl,mutualGroups,isOnline}) => {
     return `
             <div class="${window.innerWidth > 700 ? "card" : ""} card-sm flex flex-col items-center justify-center">
             ${window.innerWidth < 700 ?

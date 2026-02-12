@@ -6,6 +6,8 @@ import { PrivateChats } from "./templates/PrivateChats.js";
 import GroupChats from "./templates/GroupChats.js";
 import ChatHeader from "./templates/ChatHeader.js";
 import MessageComponent from "./templates/MessageComponent.js";
+import { sortChats } from "./utils/chatUtils.js";
+import { initiateChat, toggleView } from "./people.js";
 
 
 //global variables/elements
@@ -51,19 +53,15 @@ window.addEventListener("storage", (e) => {
     }
 })
 
-
- function displayChats(value = "") {
-
+ const displayChats = (value = "") => {
     //get chats that this user is in
      let chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
-    //if no chats are found
-    if (!chats.length) {
+     if (!chats.length) {
         const message = document.createElement("p");
         message.innerText = "No chats yet.";
         chatList.appendChild(message);
         return;
     }
-
      //if the search value is not empty
      if (value) {
          value = value.trim().toLowerCase();
@@ -73,23 +71,12 @@ window.addEventListener("storage", (e) => {
              }
 
              return chat.messages?.at(-1)?.content?.toLowerCase().includes(value);
-             
          })
      }
-    //display the chats
-     const list = document.createElement("ul");
      
-     //sort by date
-
-    chats = chats.sort((chatA, chatB) => {
-        const lastA = chatA.messages?.at(-1)?.time;
-        const lastB = chatB.messages?.at(-1)?.time;
-
-        const timeA = lastA ? Date.parse(lastA) : 0;
-        const timeB = lastB ? Date.parse(lastB) : 0;
-
-        return timeB - timeA;
-    });
+     const list = document.createElement("ul");
+     //sort by time
+     sortChats(chats);
 
     chats.forEach(async(chat) => {
         //create an element for each chat
@@ -100,70 +87,26 @@ window.addEventListener("storage", (e) => {
             //other user in the chat
             const userId = chat.users.find(id => id != sessionUser.id);
             const user = userStore.getAll().find(u => u.id == userId);
-
-            
-
             item.addEventListener("click", () => showSelectedChat(chat.id))
             item.innerHTML = await PrivateChats({ user, chat, chatIdElement, sessionUser, getImageUrl });
         }
         else if(isGroupsChat && chat.type == "group"){
             //group chats
-            //other users in the chat
             item.addEventListener("click", () => showSelectedChat(chat.id))
             item.innerHTML = await GroupChats({chat, getImageUrl,chatIdElement})
-                
         }
-            
         list.appendChild(item);
     })
+     
     //append the list to the parent node
     chatList.replaceChildren(list);
 
 }
-function toggleView() {
-    if (window.innerWidth > 700) {
-        //desktop, just skip this method
-        return;
-    }
-    //main is currently active
-    if (middleView.style.display == "none") {
-        //bottom nav needs to be gone
-        document.getElementById("bottomNav").style.display = "grid";
-        middleView.style.display = "flex";
-        mainView.style.display = "none";
-        return;
-    }
-    //middleView is currently active
-    document.getElementById("bottomNav").style.display = "none";
-    middleView.style.display = "none";
-    mainView.style.display = "block";
-}
-
-// create a private chat
-function initiateChat(userId) {
-    const chat = new Chat([userId, sessionUser?.id]);
-    const alert = new Alert();
-    const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
-
-    //check if the chat between the two does not exist
-    if (chats.some(c => c.users.includes(userId) && c.type != "group")) {
-        location.href = './chat.html';
-        return;
-    }
-    chatStore.insert(chat);
-    location.href = `./chat.html?c=${chat.id}`;
-}
 
 
 
-//link to the window
-window.initiateChat = initiateChat;
-window.toggleView = toggleView;
-window.sendMessage = sendMessage;
 
-
-
-async function showSelectedChat(chatId) {
+const showSelectedChat = async(chatId) => {
     //save to the chatIdElement that is not yet on the page
     chatIdElement.value = chatId;
 
@@ -186,9 +129,8 @@ async function showSelectedChat(chatId) {
             }
             const fileInput = document.createElement("input");
             fileInput.type = "file";
-
+            fileInput.accept = "image/*";
             fileInput.click();
-
             fileInput.onchange = async(e) => {
                 if (fileInput.files) {
                     //upload the image to indexedDB
@@ -196,7 +138,6 @@ async function showSelectedChat(chatId) {
                 }
             }
         })
-
         //display the chat input container
         document.getElementById("chatInputContainer").style.display = "flex";
         //insert its contents
@@ -204,8 +145,6 @@ async function showSelectedChat(chatId) {
             <textarea type="text" name="chatInput" id="chatInput" class="w-full"></textarea>
             <button class="bg-primary" onclick="sendMessage('${chat.id}')">Send</button>
         `
-
-
         document.getElementById("chatInput").addEventListener("keydown", (e) => {
 
             if (window.innerWidth > 700) {
@@ -213,7 +152,6 @@ async function showSelectedChat(chatId) {
                     sendMessage(chatId);
                 }
             }
-            
             //current chat
             if (!typingStore.getAll().some(t => t.chatId == chatId && t.userId == sessionUser.id)) {
                 typingStore.insert({ chatId, userId: sessionUser.id });
@@ -259,7 +197,6 @@ async function showSelectedChat(chatId) {
                 }
             }
         })
-        
     }
     else {
         const alert = new Alert();
@@ -267,9 +204,7 @@ async function showSelectedChat(chatId) {
     }
 }
 
-
-function renderMessages(chat, append = false, message = null) {
-
+const renderMessages = (chat, append = false, message = null) => {
     /**
      * Renders messages on the DOM
      * if append is true, message must be an object, it will append message into the dom instead of replacing all elements
@@ -301,7 +236,6 @@ function renderMessages(chat, append = false, message = null) {
         return;
     }
 
-
     const messages = [];
     //sort the messages 
     chat.messages?.forEach(message => {
@@ -311,16 +245,13 @@ function renderMessages(chat, append = false, message = null) {
         element.innerHTML = MessageComponent({ message, sessionUser });
         messages.push(element);
     })
-
     //render the messages
     messagesView.replaceChildren(...messages);
     //scroll down
     messagesView.scrollTop = messagesView.scrollHeight;
-    
 }
 
-
-function sendMessage(chatId) {
+const sendMessage = (chatId) => {
     /**
      * Reads the chatInput element, creates a message object, and stores in localstorage
      */
@@ -341,3 +272,8 @@ function sendMessage(chatId) {
     displayChats();
     document.getElementById("chatInput").value = "";
 }
+
+//link to the window
+window.initiateChat = initiateChat;
+window.toggleView = toggleView;
+window.sendMessage = sendMessage;

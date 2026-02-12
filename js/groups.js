@@ -10,9 +10,8 @@ const alert = new Alert();
 const chatStore = new Store("chats");
 let selectedUsers = [];
 
-window.createGroupChat = createGroupChat;
 // Create a group chat
-function createGroupChat() {
+const createGroupChat = () => {
     const users = selectedUsers;
     const name = document.getElementById("groupNameInput").value;
     if (!name) {
@@ -28,6 +27,9 @@ function createGroupChat() {
     chatStore.insert(chat);
     location.href = `./groups.html?c=${chat.id}`;
 }
+
+window.createGroupChat = createGroupChat;
+
 
 
 window.toggleModal = () => {
@@ -45,7 +47,7 @@ window.toggleModal = () => {
     }
 }
 
-function toggleUserSelection(userId) {
+const toggleUserSelection = (userId) => {
     //add or remove the selected userId
     if (selectedUsers.includes(userId)) {
         selectedUsers = selectedUsers.filter(id => id != userId);
@@ -56,7 +58,7 @@ function toggleUserSelection(userId) {
     renderUsers();
 }
 
-function renderUsers() {
+const renderUsers = () => {
     //render users that we can add to the chat, except this user
     const userStore = new Store("users");
     const users = userStore.getAll().filter(user => user.id != sessionUser.id);
@@ -78,7 +80,7 @@ function renderUsers() {
     document.getElementById("availUsers").replaceChildren(list);
 }
 
-export function getMutualGroups(userId){
+export const getMutualGroups = (userId) =>{
     const sessionUser = JSON.parse(sessionStorage.getItem("session"));
 
     const groups = new Store("chats").getAll().filter(chat => chat.type == "group");

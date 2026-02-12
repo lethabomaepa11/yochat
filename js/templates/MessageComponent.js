@@ -1,4 +1,4 @@
-export default function ({ message, sessionUser }) {
+export default ({ message, sessionUser })  => {
     const date = new Date(message.time);
     return `
         <div class="message-container">
