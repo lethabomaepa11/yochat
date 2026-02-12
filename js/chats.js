@@ -1,6 +1,7 @@
 import { Store } from "./utils/store.js"
 import { Alert } from "./utils/alert.js"
 import { Chat, Message } from "./models/Chat.js";
+import { getImageUrl, uploadImage } from "./utils/images.js";
 
 
 //global variables/elements
@@ -46,7 +47,7 @@ window.addEventListener("storage", (e) => {
 })
 
 
-function displayChats() {
+ function displayChats() {
 
     //get chats that this user is in
     const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
@@ -60,7 +61,7 @@ function displayChats() {
 
     //display the chats
     const list = document.createElement("ul");
-    chats.forEach(chat => {
+    chats.forEach(async(chat) => {
         //create an element for each chat
         const item = document.createElement("li");
         
@@ -75,7 +76,7 @@ function displayChats() {
             item.addEventListener("click", () => showSelectedChat(chat.id))
             item.innerHTML =
                 `<div id='div-${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
-                    <img class='avatar' src='../assets/images/avatar.jpg'/>
+                    <img class='avatar' src='${await getImageUrl(user.id)}'/>
                     <span>
                         <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
                         <p class='text-grey text-xs'>
@@ -92,7 +93,7 @@ function displayChats() {
             item.addEventListener("click", () => showSelectedChat(chat.id))
             item.innerHTML =
                 `<div id='${chat.name}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
-                    <img class='avatar' src='../assets/images/avatar.jpg'/>
+                    <img class='avatar' src='${await getImageUrl(chat.id)}'/>
                     <span>
                         <p>${chat.name}</p>
                         <p class='text-grey text-xs'>
@@ -151,7 +152,7 @@ window.toggleView = toggleView;
 window.sendMessage = sendMessage;
 
 
-function showSelectedChat(chatId) {
+async function showSelectedChat(chatId) {
     //save to the chatIdElement that is not yet on the page
     chatIdElement.value = chatId;
 
@@ -168,13 +169,29 @@ function showSelectedChat(chatId) {
         //add the elements to the chatHeader
         document.getElementById("chatHeader").innerHTML = `
             <a href="./chat.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
-            <img class='avatar' src='../assets/images/avatar.jpg' />
+            <img  id='profileImage' class='avatar' src='${await getImageUrl(chat.type == "group" ? chat.id : user.id)}' />
             <span>
                 <p>${chat.type == "group" ? chat.name : user.firstName + " " + user.surname}</p>
                 ${chat.type == "group" ? `<p class="text-xs">${chat.users.length} members</p>` :
                 onlineUsers.includes(userId) ? `<p id="onlineStatus" class='text-success text-xs'>online</p>` : `<p id="onlineStatus" class='text-error text-xs'>offline</p>` }
             </span>   
         `
+        document.getElementById("profileImage").addEventListener("click", (e) => {
+            if (chat.type != "group") {
+                return;
+            }
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+
+            fileInput.click();
+
+            fileInput.onchange = async(e) => {
+                if (fileInput.files) {
+                    //upload the image to indexedDB
+                    await uploadImage(fileInput.files[0], chat.id)
+                }
+            }
+        })
         //display the chat input container
         document.getElementById("chatInputContainer").style.display = "flex";
         //insert its contents

@@ -2,6 +2,7 @@ import { Store } from "./utils/store.js"
 import { Alert } from "./utils/alert.js"
 import { Chat } from "./models/Chat.js";
 import { getMutualGroups } from "./groups.js";
+import { getImageUrl } from "./utils/images.js";
 
 
 //global variables/elements
@@ -56,13 +57,13 @@ function displayUsers(users = []) {
     //display the users
     const list = document.createElement("ul");
     const onlineUsers = new Store("online").getAll();
-    users.forEach(user => {
+    users.forEach(async(user) => {
         const item = document.createElement("li");
         
         item.addEventListener("click", () => showSelectedUser(user.id))
         item.innerHTML =
             `<div id='${user.username}' class='chat-list-item'>
-                <img class='avatar' src='../assets/images/avatar.jpg'/>
+                <img class='avatar' src='${await getImageUrl(user.id)}'/>
                 <span>
                     <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
                     <p class='${onlineUsers.includes(user.id) ? 'text-success' : 'text-error'} text-xs'>
@@ -108,7 +109,7 @@ function initiateChat(userId) {
 
 window.initiateChat = initiateChat;
 
-function showSelectedUser(userId) {
+async function showSelectedUser(userId) {
 
     const alert = new Alert();
     if (userId == sessionUser.id) {
@@ -127,7 +128,7 @@ function showSelectedUser(userId) {
         mainView.innerHTML = `
             <div class="${window.innerWidth > 700 ? "card": ""} card-sm flex flex-col items-center justify-center">
                 <p class="text-xs text-grey" style="margin: 0;">@${user.username}</p>
-                <img src="../assets/images/avatar.jpg" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
+                <img src="${await getImageUrl(user.id)}" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
                 <p>${user.firstName} ${user.surname}</p>
                 <p id="onlineStatus" class="${isOnline ? "text-success" : "text-error"} text-xs"><b>${isOnline ? "online" : "offline"}</b></p>
                 <div>

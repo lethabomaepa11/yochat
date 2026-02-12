@@ -101,6 +101,9 @@ i:hover {
 }
 .list {
   width: 100%;
+  height: 80vh;
+  overflow: hidden;
+  overflow-y: auto;
 }
 /* Expected children: Image + Span*/
 .chat-list-item {

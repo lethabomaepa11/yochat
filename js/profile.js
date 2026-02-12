@@ -2,6 +2,7 @@ import { Store } from "./utils/store.js"
 import { Alert } from "./utils/alert.js"
 import { Chat } from "./models/Chat.js";
 import { isUniqueUsername } from "./signup.js";
+import { getImageUrl, uploadImage } from "./utils/images.js";
 
 
 
@@ -22,7 +23,7 @@ function displayView() {
     mainView.style.display = "block";
 }
 
-function showUserProfile() {
+async function showUserProfile() {
     const userStore = new Store("users");
     const user = userStore.getAll().find(usr => usr.id == sessionUser.id);
 
@@ -59,8 +60,8 @@ function showUserProfile() {
                     <button class="chat-list-item logoutBtn" style="color: red;padding: 10px;width: max-content">Logout</button>
                 </span>` : ""}
                 <p class="text-xs text-grey" style="margin: 0;">@${user.username}</p>
-                <img onclick="upload" src="../assets/images/avatar.jpg" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
-                <button title="Upload new Image" id="fileInput" class="bg-background" style="color: white">
+                <img onclick="upload" src="${await getImageUrl(user.id)}" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
+                <button title="Upload new Image" id="fileInputBtn" class="bg-background" style="color: white">
                     <i class="fa fa-upload" style="padding: 0"></i>
                 </button>
                 <p>${user.firstName} ${user.surname}</p>
@@ -79,6 +80,19 @@ function showUserProfile() {
             location.reload();
         }
 
+        document.getElementById("fileInputBtn").addEventListener("click",(e) => {
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+
+            fileInput.click();
+
+            fileInput.onchange = async(e) => {
+                if (fileInput.files) {
+                    //upload the image to indexedDB
+                    await uploadImage(fileInput.files[0], sessionUser.id)
+                }
+            }
+        })
         document.getElementById("profileForm").addEventListener("submit", (e) => handleSubmit(e));
         const usernameInput = document.getElementById("username");
         usernameInput.addEventListener("change", () => {
