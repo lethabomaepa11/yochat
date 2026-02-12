@@ -181,7 +181,7 @@ async function showSelectedChat(chatId) {
         mainView.classList.add("flex", "flex-col", "items-center");
         //add the elements to the chatHeader
         document.getElementById("chatHeader").innerHTML = `
-            <a href="./chat.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
+            <a href="./${chat.type == "group" ? "groups" :"chat"}.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
             <img  id='profileImage' class='avatar' src='${await getImageUrl(chat.type == "group" ? chat.id : user.id)}' />
             <span>
                 <p>${chat.type == "group" ? chat.name : user.firstName + " " + user.surname}</p>

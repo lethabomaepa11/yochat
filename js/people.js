@@ -84,11 +84,14 @@ function toggleView() {
     }
     //main is currently active
     if (middleView.style.display == "none") {
+        document.getElementById("bottomNav").style.display = "grid";
         middleView.style.display = "flex";
         mainView.style.display = "none";
         return;
     }
+
     //middleView is currently active
+    document.getElementById("bottomNav").style.display = "none";
     middleView.style.display = "none";
     mainView.style.display = "block";
 }
@@ -126,7 +129,12 @@ async function showSelectedUser(userId) {
         //show the person on the main view
         mainView.classList.add("flex", "flex-col", "items-center", "justify-center");
         mainView.innerHTML = `
-            <div class="${window.innerWidth > 700 ? "card": ""} card-sm flex flex-col items-center justify-center">
+            <div class="${window.innerWidth > 700 ? "card" : ""} card-sm flex flex-col items-center justify-center">
+            ${window.innerWidth < 700 ?
+                `<span class="flex items-center w-full" style="margin: 5px">
+                    <a href="./people.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
+                    <h3>${user.firstName} ${user.surname}</h3>
+                </span>` : ""}
                 <p class="text-xs text-grey" style="margin: 0;">@${user.username}</p>
                 <img src="${await getImageUrl(user.id)}" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
                 <p>${user.firstName} ${user.surname}</p>
@@ -143,7 +151,7 @@ async function showSelectedUser(userId) {
                         })}
                     </p>
                 </div>
-                <button class="bg-primary w-full" onclick="initiateChat('${user.id}')">Say Hi!</button>
+                <button class="bg-primary w-full" ${window.innerWidth < 700 && `style="position: fixed;bottom: 5px;"`} onclick="initiateChat('${user.id}')">Say Hi!</button>
             </div>
         `
     }
