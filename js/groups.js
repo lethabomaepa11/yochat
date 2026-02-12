@@ -1,6 +1,8 @@
 import { Chat } from "./models/Chat.js";
 import { Alert } from "./utils/alert.js";
 import { Store } from "./utils/store.js";
+import { getImageUrl } from "./utils/images.js";
+
 
 
 const sessionUser = JSON.parse(sessionStorage.getItem("session"));
@@ -59,13 +61,13 @@ function renderUsers() {
     const userStore = new Store("users");
     const users = userStore.getAll().filter(user => user.id != sessionUser.id);
     const list = document.createElement("ul");
-    users.forEach(user => {
+    users.forEach(async user => {
         //create an element for each user
         const item = document.createElement("li");
         item.addEventListener("click", () => toggleUserSelection(user.id))
         item.innerHTML =
             `<div id='${user.username}' class='chat-list-item ${selectedUsers.includes(user.id) ? "bg-primary" : ""}'>
-                <img class='avatar' src='../assets/images/avatar.jpg'/>
+                <img class='avatar' src='${await getImageUrl(user.id)}'/>
                 <span>
                     <p>${user.firstName} ${user.surname}</p>
                 </span>

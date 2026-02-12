@@ -14,7 +14,7 @@ export class Message{
         this.chatId = chatId;
         this.senderId = senderId;
         this.content = content;
-        this.time = new Date().toLocaleTimeString();
+        this.time = new Date();
         this.status = "sent";
     }
 }

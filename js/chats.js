@@ -2,6 +2,10 @@ import { Store } from "./utils/store.js"
 import { Alert } from "./utils/alert.js"
 import { Chat, Message } from "./models/Chat.js";
 import { getImageUrl, uploadImage } from "./utils/images.js";
+import { PrivateChats } from "./templates/PrivateChats.js";
+import GroupChats from "./templates/GroupChats.js";
+import ChatHeader from "./templates/ChatHeader.js";
+import MessageComponent from "./templates/MessageComponent.js";
 
 
 //global variables/elements
@@ -73,7 +77,20 @@ window.addEventListener("storage", (e) => {
          })
      }
     //display the chats
-    const list = document.createElement("ul");
+     const list = document.createElement("ul");
+     
+     //sort by date
+
+    chats = chats.sort((chatA, chatB) => {
+        const lastA = chatA.messages?.at(-1)?.time;
+        const lastB = chatB.messages?.at(-1)?.time;
+
+        const timeA = lastA ? Date.parse(lastA) : 0;
+        const timeB = lastB ? Date.parse(lastB) : 0;
+
+        return timeB - timeA;
+    });
+
     chats.forEach(async(chat) => {
         //create an element for each chat
         const item = document.createElement("li");
@@ -87,34 +104,14 @@ window.addEventListener("storage", (e) => {
             
 
             item.addEventListener("click", () => showSelectedChat(chat.id))
-            item.innerHTML =
-                `<div id='div-${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
-                    <img class='avatar' src='${await getImageUrl(user.id)}'/>
-                    <span>
-                        <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
-                        <p class='text-grey text-xs'>
-                            ${chat.messages.at(-1)?.senderId == sessionUser.id ? "You" : user.firstName}:
-                            ${chat.messages.at(-1)?.content ?? ""}
-                        </p>
-                        <p class='text-grey text-xs'>${chat.messages.at(-1)?.time ?? ""}</p>
-                    </span>
-                </div>`
+            item.innerHTML = await PrivateChats({ user, chat, chatIdElement, sessionUser, getImageUrl });
         }
         else if(isGroupsChat && chat.type == "group"){
             //group chats
             //other users in the chat
             item.addEventListener("click", () => showSelectedChat(chat.id))
-            item.innerHTML =
-                `<div id='${chat.name}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
-                    <img class='avatar' src='${await getImageUrl(chat.id)}'/>
-                    <span>
-                        <p>${chat.name}</p>
-                        <p class='text-grey text-xs'>
-                            ${chat.messages.at(-1)?.content ?? ""}
-                        </p>
-                        <p class='text-grey text-xs'>${chat.messages.at(-1)?.time ?? ""}</p>
-                    </span>
-                </div>`
+            item.innerHTML = await GroupChats({chat, getImageUrl,chatIdElement})
+                
         }
             
         list.appendChild(item);
@@ -165,6 +162,7 @@ window.toggleView = toggleView;
 window.sendMessage = sendMessage;
 
 
+
 async function showSelectedChat(chatId) {
     //save to the chatIdElement that is not yet on the page
     chatIdElement.value = chatId;
@@ -180,15 +178,8 @@ async function showSelectedChat(chatId) {
         //show the person on the main view
         mainView.classList.add("flex", "flex-col", "items-center");
         //add the elements to the chatHeader
-        document.getElementById("chatHeader").innerHTML = `
-            <a href="./${chat.type == "group" ? "groups" :"chat"}.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
-            <img  id='profileImage' class='avatar' src='${await getImageUrl(chat.type == "group" ? chat.id : user.id)}' />
-            <span>
-                <p>${chat.type == "group" ? chat.name : user.firstName + " " + user.surname}</p>
-                ${chat.type == "group" ? `<p class="text-xs">${chat.users.length} members</p>` :
-                onlineUsers.includes(userId) ? `<p id="onlineStatus" class='text-success text-xs'>online</p>` : `<p id="onlineStatus" class='text-error text-xs'>offline</p>` }
-            </span>   
-        `
+        document.getElementById("chatHeader").innerHTML = await ChatHeader({ chat, getImageUrl, user, onlineUsers, userId });
+
         document.getElementById("profileImage").addEventListener("click", (e) => {
             if (chat.type != "group") {
                 return;
@@ -205,6 +196,7 @@ async function showSelectedChat(chatId) {
                 }
             }
         })
+
         //display the chat input container
         document.getElementById("chatInputContainer").style.display = "flex";
         //insert its contents
@@ -275,6 +267,7 @@ async function showSelectedChat(chatId) {
     }
 }
 
+
 function renderMessages(chat, append = false, message = null) {
 
     /**
@@ -290,14 +283,7 @@ function renderMessages(chat, append = false, message = null) {
         let element = document.createElement("div");
 
         //check the type, is it sent to or from this user
-        element.innerHTML = `
-        <div class="message-container">
-            <div id="message${message.senderId == sessionUser.id ? "From" : "To"}" class="message">
-                <p>${message.content}</p>
-                <p class="text-xs">${message.time}</p>
-            </div>
-        </div>
-        `
+        element.innerHTML = MessageComponent({ message, sessionUser });
         messagesView.appendChild(element);
         //scroll down
         messagesView.scrollTop = messagesView.scrollHeight;
@@ -322,15 +308,7 @@ function renderMessages(chat, append = false, message = null) {
         let element = document.createElement("div");
 
         //check the type, is it sent to or from this user
-        element.innerHTML = `
-        <div class="message-container">
-            <div id="message${message.senderId == sessionUser.id ? "From" : "To"}" class="message">
-                ${chat.type == "group" && message.senderId != sessionUser.id  ?"<p class='text-primary'>"+userStore.getAll().find(u => u.id == message.senderId).username+"</p>" : "" }
-                <p>${message.content}</p>
-                <p class="text-xs">${message.time}</p>
-            </div>
-        </div>
-        `
+        element.innerHTML = MessageComponent({ message, sessionUser });
         messages.push(element);
     })
 
@@ -362,16 +340,4 @@ function sendMessage(chatId) {
     renderMessages(chat, true, message);
     displayChats();
     document.getElementById("chatInput").value = "";
-}
-
-
-function formatText(text) {
-    let i;
-    const tag = "*";
-    //jump to first 
-    i = text.indexOf("*");
-    while (i < text.length) {
-
-        i++;
-    }
 }

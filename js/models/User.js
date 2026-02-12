@@ -1,5 +1,5 @@
 export class User{
-    constructor(firstName, surname, username, password, securityQuestion, securityAnswer) {
+    constructor(firstName, surname, username, password) {
         this.id = crypto.randomUUID();
         this.firstName = firstName;
         this.surname = surname;

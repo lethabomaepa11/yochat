@@ -17,7 +17,11 @@ export class Store{
 
     
     insert(value) {
-        // Inserts new data without overwriting the existing data in localstorage
+        /**
+         * Inserts new data without overwriting the existing data in localstorage
+         * @param {object} - value
+         */
+        
         try {
             const data = this.getAll();
             data.push(value);
