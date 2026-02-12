@@ -1,4 +1,5 @@
 import { OnlineStatus } from "./js/utils/statuses.js";
+import { Store } from "./js/utils/store.js";
 
 //check the current page the user is in and if unauthenticated, redirect them to login
 const publicPages = ["index.html", "login.html", "signup.html"];

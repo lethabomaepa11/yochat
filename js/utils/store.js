@@ -12,7 +12,7 @@ export class Store{
             throw Error("Key is required for Store instance");
         }
         
-        this.key = key;
+        this._key = key;
     }
 
     
@@ -21,7 +21,7 @@ export class Store{
         try {
             const data = this.getAll();
             data.push(value);
-            localStorage.setItem(this.key, JSON.stringify(data));
+            localStorage.setItem(this._key, JSON.stringify(data));
         } catch (e) {
             throw Error(e.message);
         }
@@ -32,9 +32,9 @@ export class Store{
          * Returns the array of all items of a particular localStorage item.
          * @returns {Array}
          */
-        const raw = localStorage.getItem(this.key);
+        const raw = localStorage.getItem(this._key);
         if (raw) {
-            return JSON.parse(localStorage.getItem(this.key));
+            return JSON.parse(localStorage.getItem(this._key));
         }
         return [];
     }
@@ -52,7 +52,11 @@ export class Store{
             filtered = data.filter(item => item !== value);
         }
 
-        localStorage.setItem(this.key, JSON.stringify(filtered));
+        localStorage.setItem(this._key, JSON.stringify(filtered));
+    }
+
+    set(data) {
+        localStorage.setItem(this._key, JSON.stringify(data));
     }
 
 }

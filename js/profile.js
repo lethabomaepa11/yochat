@@ -59,13 +59,15 @@ function showUserProfile() {
                     <button class="chat-list-item logoutBtn" style="color: red;padding: 10px;width: max-content">Logout</button>
                 </span>` : ""}
                 <p class="text-xs text-grey" style="margin: 0;">@${user.username}</p>
-                <img src="../assets/images/avatar.jpg" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
+                <img onclick="upload" src="../assets/images/avatar.jpg" alt="${user.username}" class="avatar" style="width: 100px;height: 100px;"/>
+                <button title="Upload new Image" id="fileInput" class="bg-background" style="color: white">
+                    <i class="fa fa-upload" style="padding: 0"></i>
+                </button>
                 <p>${user.firstName} ${user.surname}</p>
                 <p class="text-success text-xs"><b>Online</b></p>
                 ${formTemplate}
             </div>
         `
-        console.log(document.getElementsByClassName("logoutBtn"));
         const logoutBtns = document.getElementsByClassName("logoutBtn");
         for (let i = 0; i < logoutBtns.length; i++) {
             logoutBtns[i].addEventListener("click", handleLogout);
