@@ -14,6 +14,10 @@
   --radius: 10px;
 }
 
+* {
+  transition: all 0.6s ease-in-out;
+}
+
 /* Element styles */
 body {
   color: white;
@@ -45,6 +49,7 @@ form {
 .form-field {
   display: grid;
 }
+.btn,
 button,
 input,
 textarea {
@@ -58,6 +63,7 @@ textarea {
   background-color: var(--secondary);
   color: white;
 }
+.btn,
 button {
   border-radius: 25px;
   background-color: var(--secondary);
@@ -97,6 +103,9 @@ i:hover {
 }
 .list {
   width: 100%;
+  height: 80vh;
+  overflow: hidden;
+  overflow-y: auto;
 }
 /* Expected children: Image + Span*/
 .chat-list-item {
@@ -243,6 +252,9 @@ ul li {
   width: 100px;
   position: relative;
 }
+#middleViewLogo {
+  display: none;
+}
 /* Mobile styles */
 @media screen and (max-width: 700px) {
   .form-container {
@@ -255,6 +267,16 @@ ul li {
 
   .sm-flex-col {
     flex-direction: column;
+  }
+  .sm-flex-col-reverse {
+    flex-direction: column-reverse;
+  }
+  .authLogo {
+    width: 200px;
+  }
+  #middleViewLogo {
+    display: inline;
+    height: 70px;
   }
   /* No sidebar on mobile */
   aside {

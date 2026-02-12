@@ -1,6 +1,11 @@
 import { Store } from "./utils/store.js"
 import { Alert } from "./utils/alert.js"
 import { Chat, Message } from "./models/Chat.js";
+import { getImageUrl, uploadImage } from "./utils/images.js";
+import { PrivateChats } from "./templates/PrivateChats.js";
+import GroupChats from "./templates/GroupChats.js";
+import ChatHeader from "./templates/ChatHeader.js";
+import MessageComponent from "./templates/MessageComponent.js";
 
 
 //global variables/elements
@@ -15,6 +20,7 @@ const chatStore = new Store("chats");
 const userStore = new Store("users");
 const isGroupsChat = location.href.includes("groups.html");
 const onlineUsers = new Store("online").getAll();
+const typingStore = new Store("typing");
 
 //event listeners
 window.addEventListener("load", () => {
@@ -29,7 +35,7 @@ window.addEventListener("load", () => {
     }
     
 });
-searchInput.addEventListener("change", (e) => getUsers(searchInput.value));
+searchInput.addEventListener("change", (e) => displayChats(searchInput.value));
 //listen for events on localstorage chats key
 window.addEventListener("storage", (e) => {
 
@@ -46,10 +52,10 @@ window.addEventListener("storage", (e) => {
 })
 
 
-function displayChats() {
+ function displayChats(value = "") {
 
     //get chats that this user is in
-    const chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
+     let chats = chatStore.getAll().filter(c => c.users.includes(sessionUser.id));
     //if no chats are found
     if (!chats.length) {
         const message = document.createElement("p");
@@ -58,9 +64,34 @@ function displayChats() {
         return;
     }
 
+     //if the search value is not empty
+     if (value) {
+         value = value.trim().toLowerCase();
+         chats = chats.filter(chat => {
+             if (chat.type == "group") {
+                 return chat.name.toLowerCase().includes(value);
+             }
+
+             return chat.messages?.at(-1)?.content?.toLowerCase().includes(value);
+             
+         })
+     }
     //display the chats
-    const list = document.createElement("ul");
-    chats.forEach(chat => {
+     const list = document.createElement("ul");
+     
+     //sort by date
+
+    chats = chats.sort((chatA, chatB) => {
+        const lastA = chatA.messages?.at(-1)?.time;
+        const lastB = chatB.messages?.at(-1)?.time;
+
+        const timeA = lastA ? Date.parse(lastA) : 0;
+        const timeB = lastB ? Date.parse(lastB) : 0;
+
+        return timeB - timeA;
+    });
+
+    chats.forEach(async(chat) => {
         //create an element for each chat
         const item = document.createElement("li");
         
@@ -73,34 +104,14 @@ function displayChats() {
             
 
             item.addEventListener("click", () => showSelectedChat(chat.id))
-            item.innerHTML =
-                `<div id='div-${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
-                    <img class='avatar' src='../assets/images/avatar.jpg'/>
-                    <span>
-                        <p>${user.firstName} ${user.surname} ${sessionUser.id == user.id ? "(You)":""}</p>
-                        <p class='text-grey text-xs'>
-                            ${chat.messages.at(-1)?.senderId == sessionUser.id ? "You" : user.firstName}:
-                            ${chat.messages.at(-1)?.content ?? ""}
-                        </p>
-                        <p class='text-grey text-xs'>${chat.messages.at(-1)?.time ?? ""}</p>
-                    </span>
-                </div>`
+            item.innerHTML = await PrivateChats({ user, chat, chatIdElement, sessionUser, getImageUrl });
         }
         else if(isGroupsChat && chat.type == "group"){
             //group chats
             //other users in the chat
             item.addEventListener("click", () => showSelectedChat(chat.id))
-            item.innerHTML =
-                `<div id='${chat.name}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
-                    <img class='avatar' src='../assets/images/avatar.jpg'/>
-                    <span>
-                        <p>${chat.name}</p>
-                        <p class='text-grey text-xs'>
-                            ${chat.messages.at(-1)?.content ?? ""}
-                        </p>
-                        <p class='text-grey text-xs'>${chat.messages.at(-1)?.time ?? ""}</p>
-                    </span>
-                </div>`
+            item.innerHTML = await GroupChats({chat, getImageUrl,chatIdElement})
+                
         }
             
         list.appendChild(item);
@@ -151,7 +162,8 @@ window.toggleView = toggleView;
 window.sendMessage = sendMessage;
 
 
-function showSelectedChat(chatId) {
+
+async function showSelectedChat(chatId) {
     //save to the chatIdElement that is not yet on the page
     chatIdElement.value = chatId;
 
@@ -166,15 +178,25 @@ function showSelectedChat(chatId) {
         //show the person on the main view
         mainView.classList.add("flex", "flex-col", "items-center");
         //add the elements to the chatHeader
-        document.getElementById("chatHeader").innerHTML = `
-            <a href="./chat.html" style="color: white"><i class="fa fa-arrow-left"></i></a>
-            <img class='avatar' src='../assets/images/avatar.jpg' />
-            <span>
-                <p>${chat.type == "group" ? chat.name : user.firstName + " " + user.surname}</p>
-                ${chat.type == "group" ? `<p class="text-xs">${chat.users.length} members</p>` :
-                onlineUsers.includes(userId) ? `<p id="onlineStatus" class='text-success text-xs'>online</p>` : `<p id="onlineStatus" class='text-error text-xs'>offline</p>` }
-            </span>   
-        `
+        document.getElementById("chatHeader").innerHTML = await ChatHeader({ chat, getImageUrl, user, onlineUsers, userId });
+
+        document.getElementById("profileImage").addEventListener("click", (e) => {
+            if (chat.type != "group") {
+                return;
+            }
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+
+            fileInput.click();
+
+            fileInput.onchange = async(e) => {
+                if (fileInput.files) {
+                    //upload the image to indexedDB
+                    await uploadImage(fileInput.files[0], chat.id)
+                }
+            }
+        })
+
         //display the chat input container
         document.getElementById("chatInputContainer").style.display = "flex";
         //insert its contents
@@ -183,14 +205,33 @@ function showSelectedChat(chatId) {
             <button class="bg-primary" onclick="sendMessage('${chat.id}')">Send</button>
         `
 
+
+        document.getElementById("chatInput").addEventListener("keydown", (e) => {
+
+            if (window.innerWidth > 700) {
+                if (!e.shiftKey && e.key.toLowerCase() == "enter") {
+                    sendMessage(chatId);
+                }
+            }
+            
+            //current chat
+            if (!typingStore.getAll().some(t => t.chatId == chatId && t.userId == sessionUser.id)) {
+                typingStore.insert({ chatId, userId: sessionUser.id });
+            }
+        })
+        
+        document.getElementById("chatInput").addEventListener("change", () => {
+            //current chat
+            typingStore.remove((t) => t.chatId == chatId && t.userId == sessionUser.id);
+        })
         displayChats();
         renderMessages(chat);
 
         //event listener for the onlineStatus, only updates the onlineStatus element
         window.addEventListener("storage", (e) => {
+            const onlineStatusEl = document.getElementById("onlineStatus");
             if (e.key == "online") {
                 const onlineUsers = new Store("online").getAll();
-                const onlineStatusEl = document.getElementById("onlineStatus");
                 //update the online status in the current chat if the user affected is in this chat
                 if (onlineUsers.includes(userId)) {
                     onlineStatusEl.innerHTML = "online";
@@ -203,6 +244,20 @@ function showSelectedChat(chatId) {
                     onlineStatusEl.classList.remove("text-success");
                 }
             }
+            else if (e.key == "typing") {
+                const typingUsers = new Store("typing").getAll();
+                const thisChat = typingUsers.find(u => u.chatId == chatId);
+                if (thisChat && thisChat.userId == user.id) {
+                    onlineStatusEl.innerHTML = "typing...";
+                    onlineStatusEl.classList.remove("text-error")
+                    onlineStatusEl.classList.add("text-success");
+                }
+                else {
+                    onlineStatusEl.innerHTML = "online";
+                    onlineStatusEl.classList.remove("text-error")
+                    onlineStatusEl.classList.add("text-success");
+                }
+            }
         })
         
     }
@@ -211,6 +266,7 @@ function showSelectedChat(chatId) {
         alert.show("error", "This chat is inaccessible, it might have been deleted, or it never existed");
     }
 }
+
 
 function renderMessages(chat, append = false, message = null) {
 
@@ -227,14 +283,7 @@ function renderMessages(chat, append = false, message = null) {
         let element = document.createElement("div");
 
         //check the type, is it sent to or from this user
-        element.innerHTML = `
-        <div class="message-container">
-            <div id="message${message.senderId == sessionUser.id ? "From" : "To"}" class="message">
-                <p>${message.content}</p>
-                <p class="text-xs">${message.time}</p>
-            </div>
-        </div>
-        `
+        element.innerHTML = MessageComponent({ message, sessionUser });
         messagesView.appendChild(element);
         //scroll down
         messagesView.scrollTop = messagesView.scrollHeight;
@@ -259,15 +308,7 @@ function renderMessages(chat, append = false, message = null) {
         let element = document.createElement("div");
 
         //check the type, is it sent to or from this user
-        element.innerHTML = `
-        <div class="message-container">
-            <div id="message${message.senderId == sessionUser.id ? "From" : "To"}" class="message">
-                ${chat.type == "group" && message.senderId != sessionUser.id  ?"<p class='text-primary'>"+userStore.getAll().find(u => u.id == message.senderId).username+"</p>" : "" }
-                <p>${message.content}</p>
-                <p class="text-xs">${message.time}</p>
-            </div>
-        </div>
-        `
+        element.innerHTML = MessageComponent({ message, sessionUser });
         messages.push(element);
     })
 
@@ -300,4 +341,3 @@ function sendMessage(chatId) {
     displayChats();
     document.getElementById("chatInput").value = "";
 }
-

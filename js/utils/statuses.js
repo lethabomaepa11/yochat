@@ -30,6 +30,3 @@ export class OnlineStatus{
     }
 }
 
-export class TypingStatus{
-    
-}

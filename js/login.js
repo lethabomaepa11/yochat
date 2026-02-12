@@ -15,7 +15,7 @@ function handleSubmit(e) {
     const user = userStore.getAll().find(user => user.username == username);
     if (user) {
         //decrypt the password
-        if (user.password == password) {
+        if (atob(user.password) == password) {
             sessionStorage.setItem("session", JSON.stringify(user));
             alert.show("success", "Logged in successfully, redirecting...")
             location.href = "../pages/chat.html";

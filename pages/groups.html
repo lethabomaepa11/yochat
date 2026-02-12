@@ -10,12 +10,14 @@
     <link href="../assets/icons/fontawesome/css/solid.css" rel="stylesheet" />
     <link href="../assets/icons/fontawesome/css/regular.css" rel="stylesheet" />
     <link rel="stylesheet" href="../global.css">
+    <link rel="shortcut icon" href="../assets/images/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="flex">
     <!-- Desktop Nav -->
     <aside>
         <ul class="flex flex-col">
+            <img id="logo" src="../assets/images/logo.png" />
             <a href="./chat.html">
                 <li title="Chat"><i class="fa-solid fa-comment-dots" style="color: white;"></i></li>
             </a>
@@ -38,7 +40,7 @@
                 <i class="fa fa-plus" style="font-size: 15px;"></i>
             </button>
         </span>
-        <input type="search" placeholder="Search groups" name="searchInput" id="searchInput" />
+        <input class="w-full" type="search" placeholder="Search groups" name="searchInput" id="searchInput" />
         <div id="chatList" class="list">
         </div>
     </div>
