@@ -2,10 +2,10 @@ import { User } from "./models/User.js";
 import { Alert } from "./utils/alert.js";
 import { Store } from "./utils/store.js";
 
-function showError(text) {
+const showError = (text) => {
     document.getElementById("signupError").innerText = text;
 }
-export function isUniqueUsername(username, userId = null) {
+export const isUniqueUsername = (username, userId = null) => {
     /**
      * Will be used in signup and edit profile
      * Accepts a username and checks if it is not a duplicate then returns the result
@@ -28,7 +28,7 @@ export function isUniqueUsername(username, userId = null) {
     return !users.some(user => user.username == username.trim());
 }
 
-function handleSubmit(e) {
+const handleSubmit = (e) => {
     e.preventDefault();
 
     const firstName = document.getElementById("firstName").value;

@@ -1,4 +1,4 @@
-export async function PrivateChats({user, chat, chatIdElement, sessionUser, getImageUrl}) {
+export const PrivateChats = async({user, chat, chatIdElement, sessionUser, getImageUrl}) => {
     return `<div id='div-${user.username}' class='chat-list-item ${chatIdElement.value == chat.id ? "bg-background": ""}'>
                 <img class='avatar' src='${await getImageUrl(user.id)}'/>
                 <span>

@@ -1,8 +1,8 @@
 import { Store } from "./utils/store.js"
 import { Alert } from "./utils/alert.js"
-import { Chat } from "./models/Chat.js";
 import { isUniqueUsername } from "./signup.js";
 import { getImageUrl, uploadImage } from "./utils/images.js";
+import ProfileForm from "./templates/ProfileForm.js";
 
 
 
@@ -10,10 +10,9 @@ const middleView = document.getElementById("middleView");
 const mainView = document.getElementById("mainView");
 const sessionUser = JSON.parse(sessionStorage.getItem("session"));
 
-//event listeners
-document.addEventListener("load", showUserProfile());
 
-function displayView() {
+
+const displayView = () => {
     if (window.innerWidth > 700) {
         //desktop, just skip this method
         return;
@@ -22,31 +21,16 @@ function displayView() {
     middleView.style.display = "none";
     mainView.style.display = "block";
 }
+const handleLogout = () => {
+            if (sessionUser) {
+                sessionStorage.clear();
+            }
+            location.reload();
+}
 
-async function showUserProfile() {
+const showUserProfile = async() => {
     const userStore = new Store("users");
-    const user = userStore.getAll().find(usr => usr.id == sessionUser.id);
-
-    const formTemplate = `<form id="profileForm" class="w-full" name="profileForm">
-                <!-- Displayed: inline on Desktop, Block on mobile -->
-                <span class="form-field flex sm-flex-col w-full" style="gap:10px;">
-                    <span class="form-field">
-                        <label for="firstName">First Name</label>
-                        <input type="text" name="firstName" id="firstName" required value="${user.firstName}"/>
-                    </span>
-                    <span class="form-field">
-                        <label for="surname">Surname</label>
-                        <input type="text" name="surname" id="surname" required value="${user.surname}"/>
-                    </span>
-                </span>
-                <span class="form-field">
-                    <label for="username">Username</label>
-                    <input type="text" name="username" id="username" required value="${user.username}"/>
-                </span>
-                <button class="bg-primary">Update</button>
-            </form>`
-    
-    
+    const user = userStore.getAll().find(usr => usr.id == sessionUser.id);    
     if (user) {
         //on mobile
         displayView();
@@ -66,55 +50,18 @@ async function showUserProfile() {
                 </button>
                 <p>${user.firstName} ${user.surname}</p>
                 <p class="text-success text-xs"><b>Online</b></p>
-                ${formTemplate}
+                ${ProfileForm({ user })}
             </div>
         `
-        const logoutBtns = document.getElementsByClassName("logoutBtn");
-        for (let i = 0; i < logoutBtns.length; i++) {
-            logoutBtns[i].addEventListener("click", handleLogout);
-        }
-        function handleLogout(){
-            if (sessionUser) {
-                sessionStorage.clear();
-            }
-            location.reload();
-        }
-
-        document.getElementById("fileInputBtn").addEventListener("click",(e) => {
-            const fileInput = document.createElement("input");
-            fileInput.type = "file";
-
-            fileInput.click();
-
-            fileInput.onchange = async(e) => {
-                if (fileInput.files) {
-                    //upload the image to indexedDB
-                    await uploadImage(fileInput.files[0], sessionUser.id)
-                }
-            }
-        })
-        document.getElementById("profileForm").addEventListener("submit", (e) => handleSubmit(e));
-        const usernameInput = document.getElementById("username");
-        usernameInput.addEventListener("change", () => {
-            const alert = new Alert();
-            if (isUniqueUsername(usernameInput.value, user.id)) {
-                alert.show("success", "Username is available");
-                
-            }
-            else {
-                alert.show("error", "Username already exists");
-            }
-        });
+        setEventListeners();
     }
     else {
         const alert = new Alert();
         alert.show("error", "An error has occured, please reload page and try again");
-    }
-
-    
-
+    }  
 }
-function handleSubmit(e) {
+
+const handleSubmit = (e) => {
     e.preventDefault();
     const alert = new Alert();
     const username = document.getElementById("username").value;
@@ -141,4 +88,45 @@ function handleSubmit(e) {
     alert.show("success", "Profile updated successfully");
     location.reload();
     
+}
+
+//event listeners
+document.addEventListener("load", showUserProfile());
+
+
+const setEventListeners = () => {
+    //profile form submission
+    document.getElementById("profileForm").addEventListener("submit", (e) => handleSubmit(e));
+
+    //username on change
+    const usernameInput = document.getElementById("username");
+    usernameInput.addEventListener("change", () => {
+        const alert = new Alert();
+        if (isUniqueUsername(usernameInput.value, user.id)) {
+            alert.show("success", "Username is available");
+            
+        }
+        else {
+            alert.show("error", "Username already exists");
+        }
+    });
+    //fileInputBtn onclick
+    document.getElementById("fileInputBtn").addEventListener("click",(e) => {
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+            fileInput.accept = "image/*";
+
+            fileInput.click();
+
+            fileInput.onchange = async(e) => {
+                if (fileInput.files) {
+                    //upload the image to indexedDB
+                    await uploadImage(fileInput.files[0], sessionUser.id)
+                }
+            }
+    })
+    const logoutBtns = document.getElementsByClassName("logoutBtn");
+        for (let i = 0; i < logoutBtns.length; i++) {
+            logoutBtns[i].addEventListener("click", handleLogout);
+        }
 }

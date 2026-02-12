@@ -1,6 +1,6 @@
 import { Alert } from "./alert.js";
 
-export async function uploadImage(file, userId) {
+export  const uploadImage = async(file, userId) => {
         const db = await openDB();
         db.transaction("images", "readwrite")
         .objectStore("images")
@@ -9,7 +9,7 @@ export async function uploadImage(file, userId) {
     new Alert().show("success","Image Uploaded successfully")
     location.reload();
 }
-export async function getImageUrl(userId){
+export  const getImageUrl = async(userId) => {
     const blob = await getImage(userId);
     if (blob) {
         return URL.createObjectURL(blob);
@@ -19,7 +19,7 @@ export async function getImageUrl(userId){
         return "../assets/images/avatar.jpg"
     }
 }
- async function getImage(userId){
+  const getImage = async(userId) => {
     const db = await openDB();
 
     return new Promise(resolve => {
@@ -33,7 +33,7 @@ export async function getImageUrl(userId){
 }
 
 
-async function openDB() {
+ const openDB = async() => {
    return new Promise((resolve, reject) => {
 		const request = indexedDB.open("YoChat!", 1);
 		request.onerror = (event) => {

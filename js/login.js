@@ -5,7 +5,7 @@ import { Store } from "./utils/store.js";
 document.getElementById("loginForm").addEventListener("submit", (e) => handleSubmit(e));
 
 
-function handleSubmit(e) {
+const handleSubmit = (e) => {
     const alert = new Alert();
     e.preventDefault();
     const username = document.getElementById("username").value;
